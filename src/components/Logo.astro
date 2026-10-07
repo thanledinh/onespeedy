@@ -1,0 +1,31 @@
+---
+import { WORDMARK, MONOGRAM } from './logoPaths';
+
+interface Props {
+  kind?: 'wordmark' | 'monogram';
+  /** reverse: chữ trắng + chấm teal (nền tối). color: chữ navy + chấm teal (nền sáng). */
+  tone?: 'reverse' | 'color';
+  class?: string;
+  title?: string;
+}
+
+const { kind = 'wordmark', tone = 'reverse', class: cls, title = 'OneSpeedy' } = Astro.props;
+const ink = tone === 'reverse' ? '#FFFFFF' : '#0B1720';
+const teal = '#18B6A4';
+---
+
+{
+  kind === 'wordmark' ? (
+    <svg class={cls} viewBox={WORDMARK.viewBox} role="img" aria-label={title} xmlns="http://www.w3.org/2000/svg">
+      <g transform={WORDMARK.transform}>
+        <path fill={ink} d={WORDMARK.letters} />
+        <path fill={teal} d={WORDMARK.dot} />
+      </g>
+    </svg>
+  ) : (
+    <svg class={cls} viewBox={MONOGRAM.viewBox} role="img" aria-label={title} xmlns="http://www.w3.org/2000/svg">
+      <path fill={ink} d={MONOGRAM.ring} />
+      <path fill={teal} d={MONOGRAM.dot} />
+    </svg>
+  )
+}

@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import Process from '../../components/Process.astro';
+import BigCta from '../../components/BigCta.astro';
+import { useT, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const p = t.servicesPage;
+---
+
+<Base lang={lang} page="services">
+  <section class="phero" data-shape="ring" data-place="corner">
+    <div class="container">
+      <p class="label" data-reveal>{p.label}</p>
+      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
+      <p class="lead" data-reveal>{p.lead}</p>
+    </div>
+  </section>
+
+  <section class="section--tight" data-shape="wave" data-place="center" data-opacity="0.6">
+    <div class="container">
+      {
+        t.services.map((s, i) => (
+          <article class="srow" data-reveal>
+            <span class="srow__num">0{i + 1}</span>
+            <div>
+              <h2 class="h2">{s.title}</h2>
+              <p>{s.text}</p>
+            </div>
+            <ul>
+              <small>{p.includes}</small>
+              {s.items.map((it) => <li>{it}</li>)}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <Process lang={lang} label={p.processLabel} title={p.processTitle} />
+
+  <section class="section" data-shape="sphere" data-place="left" data-opacity="0.55">
+    <div class="container faq-wrap">
+      <div>
+        <p class="label">{p.faqLabel}</p>
+        <h2 class="h2" style="margin-top:24px" data-split>{p.faqTitle}</h2>
+      </div>
+      <div class="faq">
+        {
+          p.faq.map((f) => (
+            <details data-reveal>
+              <summary>
+                {f.q}
+                <span class="faq__plus" aria-hidden="true" />
+              </summary>
+              <div class="faq__a">
+                <p>{f.a}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <BigCta lang={lang} />
+</Base>

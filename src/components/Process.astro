@@ -1,0 +1,31 @@
+---
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  label: string;
+  title: string;
+}
+const { lang, label, title } = Astro.props;
+const t = useT(lang);
+---
+
+<section class="process section--tight" data-hscroll data-shape="galaxy" data-place="center" data-opacity="0.9">
+  <div class="container shead">
+    <div>
+      <p class="label">{label}</p>
+      <h2 class="h2" data-split>{title}</h2>
+    </div>
+  </div>
+  <ol class="process__track">
+    {
+      t.process.map((s, i) => (
+        <li class="step" data-reveal>
+          <span class="step__num">0{i + 1}</span>
+          <h3 class="h3">{s.title}</h3>
+          <p>{s.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>

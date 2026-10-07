@@ -1,0 +1,66 @@
+---
+import Logo from './Logo.astro';
+import { useT, contact, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang).chat;
+const channels = [
+  { name: 'Zalo', href: contact.zalo },
+  { name: 'Messenger', href: contact.messenger },
+  { name: 'WhatsApp', href: contact.whatsapp },
+].filter((c) => c.href);
+---
+
+<!--
+  Khung chat CSKH (giao diện). Hiện chưa nối với hệ thống nhắn tin thật.
+  TODO: nối với Crisp / Tawk.to / Zalo OA, hoặc gửi tin nhắn về email / Telegram.
+-->
+<div class="chat" data-chat data-i18n={JSON.stringify(t)} transition:persist={`chat-${lang}`}>
+  <button class="chat__fab" type="button" data-chat-open aria-haspopup="dialog" data-cursor-hide>
+    <span class="chat__avatar"><Logo kind="monogram" /></span>
+    <span class="chat__fab-label">{t.open}</span>
+  </button>
+
+  <section class="chat__panel" role="dialog" aria-label={t.open} aria-modal="false" data-chat-panel>
+    <header class="chat__head">
+      <span class="chat__avatar"><Logo kind="monogram" /></span>
+      <div>
+        <strong>{t.title}</strong>
+        <small>{t.status}</small>
+      </div>
+      <button class="chat__close" type="button" aria-label={t.minimize} data-chat-close>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        </svg>
+      </button>
+    </header>
+
+    <div class="chat__body" data-chat-body aria-live="polite"></div>
+
+    {
+      channels.length > 0 && (
+        <div class="chat__channels">
+          <span>{t.channels}</span>
+          {channels.map((c) => (
+            <a href={c.href} rel="noopener" target="_blank">
+              {c.name}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <form class="chat__form" data-chat-form>
+      <label class="sr-only" for={`chat-input-${lang}`}>{t.placeholder}</label>
+      <input id={`chat-input-${lang}`} type="text" autocomplete="off" placeholder={t.placeholder} maxlength="500" />
+      <button type="submit" aria-label={t.send}>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </form>
+  </section>
+</div>

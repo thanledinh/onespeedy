@@ -1,0 +1,84 @@
+---
+import Base from '../../layouts/Base.astro';
+import Logo from '../../components/Logo.astro';
+import Btn from '../../components/Btn.astro';
+import BigCta from '../../components/BigCta.astro';
+import { useT, contact, path, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const p = t.aboutPage;
+const teamHref = contact.email ? `mailto:${contact.email}` : path(lang, 'contact');
+---
+
+<Base lang={lang} page="about">
+  <section class="phero" data-shape="ring" data-place="corner">
+    <div class="container">
+      <p class="label" data-reveal>{p.label}</p>
+      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
+      <p class="lead" data-reveal>{p.lead}</p>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="container story">
+      <div class="story__mark" data-reveal>
+        <Logo kind="monogram" />
+      </div>
+      <div>
+        <p class="label">{p.storyLabel}</p>
+        <h2 class="h2" style="margin:24px 0 40px" data-split>{p.storyTitle}</h2>
+        <ul class="story__list">
+          {
+            p.story.map((s) => (
+              <li data-reveal>
+                <strong>{s.k}</strong>
+                <p>{s.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" data-shape="galaxy" data-place="center" data-opacity="0.7">
+    <div class="container">
+      <div class="shead">
+        <div>
+          <p class="label">{p.valuesLabel}</p>
+          <h2 class="h2" data-split>{p.valuesTitle}</h2>
+        </div>
+      </div>
+      <div class="values">
+        {
+          p.values.map((v, i) => (
+            <div class="value" data-reveal>
+              <span class="num">0{i + 1}</span>
+              <h3 class="h3">{v.title}</h3>
+              <p>{v.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="container">
+      <div class="team" data-reveal>
+        <div>
+          <p class="label">{p.teamTitle}</p>
+          <p class="h3" style="margin-top:16px;max-width:30ch">{p.teamText}</p>
+        </div>
+        <Btn href={teamHref} variant="ghost">{p.teamCta}</Btn>
+      </div>
+    </div>
+  </section>
+
+  <BigCta lang={lang} />
+</Base>

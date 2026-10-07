@@ -1,0 +1,30 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'sm';
+  icon?: boolean;
+  class?: string;
+  cursor?: string;
+}
+const { href, variant = 'primary', size = 'md', icon = true, class: cls, cursor } = Astro.props;
+const label = await Astro.slots.render('default');
+---
+
+<a
+  href={href}
+  class:list={['btn', `btn--${variant}`, size === 'sm' && 'btn--sm', cls]}
+  data-magnetic
+  data-cursor={cursor}
+>
+  <span class="btn__label"><span set:html={label} /><span aria-hidden="true" set:html={label} /></span>
+  {
+    icon && (
+      <span class="btn__icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+    )
+  }
+</a>

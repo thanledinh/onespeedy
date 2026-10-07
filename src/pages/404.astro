@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Btn from '../components/Btn.astro';
+import { useT, path } from '../i18n/ui';
+
+const t = useT('vi');
+const en = useT('en');
+---
+
+<Base lang="vi" page={null} title="404 — OneSpeedy" noindex>
+  <section class="nf">
+    <p class="label" style="justify-self:center">404</p>
+    <h1 class="display" data-split>{t.notFound.title}</h1>
+    <p class="lead" style="margin-inline:auto" data-reveal>{t.notFound.text} <span lang="en">{en.notFound.text}</span></p>
+    <div class="hero__actions" style="justify-content:center" data-reveal>
+      <Btn href={path('vi', 'home')}>{t.notFound.back}</Btn>
+      <Btn href={path('en', 'home')} variant="ghost" icon={false}>{en.notFound.back}</Btn>
+    </div>
+  </section>
+</Base>

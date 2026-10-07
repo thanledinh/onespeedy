@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  tag: string;
+  hue: string;
+  badge: string;
+  href: string;
+  cursor: string;
+}
+const { title, tag, hue, badge, href, cursor } = Astro.props;
+---
+
+<a class="work" href={href} data-reveal data-cursor={cursor}>
+  <div class="work__media">
+    <div class={`work__art work__art--${hue}`}></div>
+    <div class="work__mock" aria-hidden="true">
+      <div class="work__bar"><i></i><i></i><i></i></div>
+      <div class="work__page">
+        <span class="work__line work__line--lg"></span>
+        <span class="work__line work__line--md"></span>
+        <span class="work__line work__line--sm"></span>
+        <span class="work__pill"></span>
+        <span class="work__img"></span>
+      </div>
+    </div>
+    <span class="work__badge">{badge}</span>
+  </div>
+  <div class="work__meta">
+    <h3 class="h3">{title}</h3>
+    <span>{tag}</span>
+  </div>
+</a>

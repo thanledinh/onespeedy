@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import BigCta from '../../components/BigCta.astro';
+import { useT, path, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const p = t.workPage;
+const cursor = lang === 'vi' ? 'Sắp có' : 'Soon';
+---
+
+<Base lang={lang} page="work">
+  <section class="phero" data-shape="ring" data-place="corner">
+    <div class="container">
+      <p class="label" data-reveal>{p.label}</p>
+      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
+      <p class="lead" data-reveal>{p.lead}</p>
+    </div>
+  </section>
+
+  <section class="section--tight" data-shape="frame" data-place="center" data-opacity="0.5">
+    <div class="container">
+      <div class="works works--grid">
+        {
+          p.concepts.map((c) => (
+            <WorkCard {...c} badge={`${p.badge} · ${p.soon}`} href={path(lang, 'contact')} cursor={cursor} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <BigCta lang={lang} />
+</Base>

@@ -1,0 +1,138 @@
+---
+import Base from '../../layouts/Base.astro';
+import Btn from '../../components/Btn.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
+import Process from '../../components/Process.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import BigCta from '../../components/BigCta.astro';
+import { useT, path, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const h = t.home;
+const marquee = [...h.marquee, ...h.marquee];
+const cursorView = lang === 'vi' ? 'Xem' : 'View';
+---
+
+<Base lang={lang} page="home">
+  <!-- HERO -->
+  <section class="hero" data-shape="ring" data-place="hero">
+    <div class="container">
+      <p class="label hero__eyebrow" data-reveal>{h.eyebrow}</p>
+      <h1 class="display hero__title" data-split>
+        <span class="line">{h.titleA}</span>
+        <span class="line thin">{h.titleB}</span>
+      </h1>
+      <div class="hero__bottom">
+        <div>
+          <p class="lead" data-reveal>{h.lead}</p>
+          <div class="hero__actions" data-reveal>
+            <Btn href={path(lang, 'contact')}>{h.ctaPrimary}</Btn>
+            <Btn href={path(lang, 'services')} variant="ghost" icon={false}>{h.ctaSecondary}</Btn>
+          </div>
+        </div>
+        <div class="hero__scroll" data-reveal><i></i>{h.scroll}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      {marquee.map((m) => <span class="marquee__item">{m}</span>)}
+    </div>
+  </div>
+
+  <!-- MANIFESTO -->
+  <section class="section" data-shape="sphere" data-place="right">
+    <div class="container">
+      <p class="label" data-reveal>{h.manifestoLabel}</p>
+      <p class="manifesto__text" data-scrub-words>{h.manifesto}</p>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section--tight" data-shape="wave" data-place="center" data-opacity="0.85">
+    <div class="container">
+      <div class="shead">
+        <div>
+          <p class="label">{h.servicesLabel}</p>
+          <h2 class="h2" data-split>{h.servicesTitle}</h2>
+        </div>
+        <a class="link-arrow" href={path(lang, 'services')} data-reveal>
+          {h.servicesMore}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+        </a>
+      </div>
+      <div class="cards">
+        {
+          t.services.map((s, i) => (
+            <article class="card" data-reveal>
+              <span class="card__num">0{i + 1}</span>
+              <ServiceIcon i={i} class="card__icon" />
+              <h3 class="h3">{s.title}</h3>
+              <p>{s.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLARS (light) -->
+  <section class="section light">
+    <div class="container">
+      <div class="shead">
+        <div>
+          <p class="label">{h.pillarsLabel}</p>
+          <h2 class="h2" data-split>{h.pillarsTitle}</h2>
+        </div>
+      </div>
+      <div class="pillars">
+        {
+          h.pillars.map((p, i) => (
+            <div class="pillar" data-reveal>
+              <span class="num muted">0{i + 1}</span>
+              <p class="pillar__k">{p.k}</p>
+              <h3 class="h3">{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <Process lang={lang} label={h.processLabel} title={h.processTitle} />
+
+  <!-- WORK -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="shead" data-shape="frame" data-place="right">
+        <div>
+          <p class="label">{h.workLabel}</p>
+          <h2 class="h2" data-split>{h.workTitle}</h2>
+          <p class="lead" style="margin-top:24px" data-reveal>{h.workText}</p>
+        </div>
+        <a class="link-arrow" href={path(lang, 'work')} data-reveal>
+          {h.workMore}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+        </a>
+      </div>
+      <div class="works works--home">
+        {
+          t.workPage.concepts.slice(0, 2).map((c) => (
+            <WorkCard {...c} badge={`${t.workPage.badge} · ${t.workPage.soon}`} href={path(lang, 'work')} cursor={cursorView} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <BigCta lang={lang} />
+</Base>

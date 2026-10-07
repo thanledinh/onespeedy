@@ -1,0 +1,65 @@
+---
+import Logo from './Logo.astro';
+import Btn from './Btn.astro';
+import { useT, path, contact, type Lang, type PageKey } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  page: PageKey | null;
+}
+const { lang, page } = Astro.props;
+const t = useT(lang);
+const links: PageKey[] = ['services', 'pricing', 'work', 'lab', 'about', 'contact'];
+const bookHref = contact.booking || path(lang, 'contact');
+const other: Lang = lang === 'vi' ? 'en' : 'vi';
+const samePage = (l: Lang) => path(l, page ?? 'home');
+---
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a class="header__logo" href={path(lang, 'home')} aria-label={`OneSpeedy — ${t.nav.home}`}>
+      <Logo class="logo-rev" />
+      <Logo tone="color" class="logo-col" />
+    </a>
+
+    <nav class="nav-pill" aria-label="Main">
+      {
+        links.map((k) => (
+          <a href={path(lang, k)} aria-current={page === k ? 'page' : undefined}>
+            {t.nav[k]}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="header__right">
+      <div class="lang" role="group" aria-label={t.nav.langLabel}>
+        <a href={samePage('vi')} hreflang="vi" lang="vi" aria-current={lang === 'vi' ? 'true' : undefined}>VI</a>
+        <a href={samePage('en')} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+      </div>
+      <Btn href={bookHref} size="sm">{t.nav.book}</Btn>
+      <button class="burger" type="button" aria-label={t.nav.menu} aria-expanded="false" aria-controls="mmenu" data-burger>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mmenu" id="mmenu" data-mmenu>
+  <ul class="mmenu__links">
+    {
+      (['home', ...links] as PageKey[]).map((k, i) => (
+        <li>
+          <a href={path(lang, k)} aria-current={page === k ? 'page' : undefined}>
+            <small>0{i + 1}</small>
+            {t.nav[k]}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="mmenu__foot">
+    <span>{t.tagline}</span>
+    <a class="link-arrow" href={samePage(other)} hreflang={other}>{other === 'en' ? 'English' : 'Tiếng Việt'}</a>
+  </div>
+</div>

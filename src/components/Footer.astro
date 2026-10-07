@@ -1,0 +1,55 @@
+---
+import Logo from './Logo.astro';
+import Btn from './Btn.astro';
+import { useT, path, contact, type Lang, type PageKey } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const links: PageKey[] = ['home', 'services', 'pricing', 'lab', 'work', 'about', 'contact'];
+const socials = [
+  { name: 'Zalo', href: contact.zalo },
+  { name: 'Messenger', href: contact.messenger },
+  { name: 'WhatsApp', href: contact.whatsapp },
+  { name: 'LinkedIn', href: contact.linkedin },
+  { name: 'Facebook', href: contact.facebook },
+].filter((s) => s.href);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__cta">
+        <p class="display" data-split>{t.footer.ctaA} <span class="thin">{t.footer.ctaB}</span></p>
+        <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
+      </div>
+      <div>
+        <h3>{t.footer.nav}</h3>
+        <ul>
+          {links.map((k) => <li><a href={path(lang, k)}>{t.nav[k]}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h3>{t.footer.connect}</h3>
+        <ul>
+          {contact.email && <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>}
+          {contact.phone && <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
+          {socials.map((s) => <li><a href={s.href} rel="noopener">{s.name}</a></li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__brand" data-reveal aria-hidden="true">
+      <Logo />
+    </div>
+
+    <div class="footer__bottom">
+      <span>© {year} OneSpeedy. {t.footer.rights}</span>
+      <span class="num">{t.tagline}</span>
+      <a href="#top" data-to-top>{t.footer.top} ↑</a>
+    </div>
+  </div>
+</footer>

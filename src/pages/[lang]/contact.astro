@@ -1,0 +1,177 @@
+---
+import Base from '../../layouts/Base.astro';
+import Logo from '../../components/Logo.astro';
+import { useT, contact, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const p = t.contactPage;
+const f = p.form;
+const msgs = { required: f.required, invalidEmail: f.invalidEmail, sending: f.sending };
+const channels = [
+  { name: 'Zalo', href: contact.zalo, k: 'Chat' },
+  { name: 'Messenger', href: contact.messenger, k: 'Chat' },
+  { name: 'WhatsApp', href: contact.whatsapp, k: 'Chat' },
+].filter((c) => c.href);
+const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M5 3h8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+---
+
+<Base lang={lang} page="contact">
+  <section class="phero" data-shape="ring" data-place="corner">
+    <div class="container">
+      <p class="label" data-reveal>{p.label}</p>
+      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
+      <p class="lead" data-reveal>{p.lead}</p>
+    </div>
+  </section>
+
+  <section class="section--tight" style="padding-top:0" data-shape="sphere" data-place="right" data-opacity="0.6">
+    <div class="container contact-grid">
+      <!-- TODO: nối form với dịch vụ nhận form (Web3Forms / Formspree / API riêng). Xem scripts/app.ts -> initForm -->
+      <form class="form" data-contact-form data-msgs={JSON.stringify(msgs)} novalidate data-reveal>
+        <div class="form__grid">
+          <div class="field">
+            <input id="f-name" name="name" type="text" placeholder=" " autocomplete="name" required />
+            <label for="f-name">{f.name} *</label>
+            <span class="field__line"></span>
+            <small class="field__err" aria-live="polite"></small>
+          </div>
+          <div class="field">
+            <input id="f-email" name="email" type="email" placeholder=" " autocomplete="email" required />
+            <label for="f-email">{f.email} *</label>
+            <span class="field__line"></span>
+            <small class="field__err" aria-live="polite"></small>
+          </div>
+          <div class="field">
+            <input id="f-phone" name="phone" type="tel" placeholder=" " autocomplete="tel" />
+            <label for="f-phone">{f.phone}</label>
+            <span class="field__line"></span>
+            <small class="field__err"></small>
+          </div>
+          <div class="field">
+            <input id="f-company" name="company" type="text" placeholder=" " autocomplete="organization" />
+            <label for="f-company">{f.company}</label>
+            <span class="field__line"></span>
+            <small class="field__err"></small>
+          </div>
+
+          <fieldset class="chips-group form__full" style="border:0;margin:0;padding-inline:0">
+            <legend class="sr-only">{f.services}</legend>
+            <span aria-hidden="true">{f.services}</span>
+            <div class="chips">
+              {
+                f.serviceOptions.map((o) => (
+                  <label class="chip">
+                    <input type="checkbox" name="services" value={o} />
+                    <span>{o}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="chips-group form__full" style="border:0;margin:0;padding-inline:0">
+            <legend class="sr-only">{f.budget}</legend>
+            <span aria-hidden="true">{f.budget}</span>
+            <div class="chips">
+              {
+                f.budgetOptions.map((o, i) => (
+                  <label class="chip">
+                    <input type="radio" name="budget" value={o} checked={i === 0} />
+                    <span>{o}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="field form__full" style="margin-top:12px">
+            <textarea id="f-msg" name="message" rows="4" placeholder=" " required></textarea>
+            <label for="f-msg">{f.message} *</label>
+            <span class="field__line"></span>
+            <small class="field__err" aria-live="polite"></small>
+          </div>
+        </div>
+
+        <div class="form__foot">
+          <small>{f.privacy}</small>
+          <button class="btn btn--primary" type="submit" data-magnetic>
+            <span class="btn__label"><span data-btn-text>{f.submit}</span></span>
+            <span class="btn__icon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="form__success" role="status">
+          <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
+            <circle cx="44" cy="44" r="40" stroke="rgba(245,247,246,.15)" stroke-width="2"></circle>
+            <path d="M28 45l11 11 21-23" stroke="#18B6A4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" data-tick></path>
+          </svg>
+          <h2 class="h2" style="font-size:clamp(1.75rem,3vw,2.5rem)">{f.successTitle}</h2>
+          <p>{f.successText}</p>
+          <button type="button" class="link-arrow" data-form-again>{f.again}</button>
+        </div>
+      </form>
+
+      <aside data-reveal>
+        {
+          contact.booking && (
+            <a class="channel channel--book" href={contact.booking} rel="noopener" target="_blank" style="margin-bottom:12px">
+              <span>
+                <small>{t.nav.bookLong}</small>
+                <strong>{p.bookText}</strong>
+              </span>
+              <Fragment set:html={arrow} />
+            </a>
+          )
+        }
+        <div class="channels">
+          {
+            contact.email && (
+              <a class="channel" href={`mailto:${contact.email}`}>
+                <span>
+                  <small>{p.emailLabel}</small>
+                  <strong>{contact.email}</strong>
+                </span>
+                <Fragment set:html={arrow} />
+              </a>
+            )
+          }
+          {
+            contact.phone && (
+              <a class="channel" href={`tel:${contact.phone.replace(/\s/g, '')}`}>
+                <span>
+                  <small>Hotline</small>
+                  <strong>{contact.phone}</strong>
+                </span>
+                <Fragment set:html={arrow} />
+              </a>
+            )
+          }
+        </div>
+        <p class="label" style="margin:40px 0 16px">{p.channelsTitle}</p>
+        <div class="channels">
+          {
+            channels.map((c) => (
+              <a class="channel" href={c.href} rel="noopener" target="_blank">
+                <span>
+                  <small>{c.k}</small>
+                  <strong>{c.name}</strong>
+                </span>
+                <Fragment set:html={arrow} />
+              </a>
+            ))
+          }
+        </div>
+        <div style="margin-top:48px;width:180px;opacity:.9">
+          <Logo />
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,124 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '@fontsource/be-vietnam-pro/300.css';
+import '@fontsource/be-vietnam-pro/400.css';
+import '@fontsource/be-vietnam-pro/500.css';
+import '@fontsource/be-vietnam-pro/600.css';
+import '@fontsource-variable/sora/index.css';
+import '../styles/global.css';
+import '../styles/pages.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Curtain from '../components/Curtain.astro';
+import ChatWidget from '../components/ChatWidget.astro';
+import Logo from '../components/Logo.astro';
+import NextPage from '../components/NextPage.astro';
+import { useT, path, contact, type Lang, type PageKey } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  page: PageKey | null;
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const { lang, page, noindex = false } = Astro.props;
+const t = useT(lang);
+const meta = page ? t.meta[page] : null;
+const title = Astro.props.title ?? meta?.title ?? 'OneSpeedy';
+const description = Astro.props.description ?? meta?.description ?? t.meta.home.description;
+const site = Astro.site ?? new URL(Astro.url.origin);
+const canonical = new URL(Astro.url.pathname, site).href;
+const alt = (l: Lang) => new URL(path(l, page ?? 'home'), site).href;
+const ogImage = new URL('/og-image.png', site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'OneSpeedy',
+  url: new URL('/', site).href,
+  logo: new URL('/android-chrome-512x512.png', site).href,
+  slogan: 'Fast to build. Easy to find.',
+  ...(contact.email ? { email: contact.email } : {}),
+};
+---
+
+<!doctype html>
+<html lang={lang} data-scene={page === 'home' ? 'home' : 'page'} transition:animate="none">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    {page && <link rel="alternate" hreflang="vi" href={alt('vi')} />}
+    {page && <link rel="alternate" hreflang="en" href={alt('en')} />}
+    {page && <link rel="alternate" hreflang="x-default" href={alt('vi')} />}
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0B1720" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OneSpeedy" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'vi' ? 'vi_VN' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Bật class js + màn mở đầu (chỉ lần đầu trong phiên, bỏ qua nếu giảm chuyển động) -->
+    <script is:inline>
+      (function () {
+        var h = document.documentElement;
+        h.classList.add('js');
+        var seen = false;
+        try { seen = sessionStorage.getItem('os-intro') === '1'; } catch (e) {}
+        var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!seen && !rm) h.classList.add('intro');
+      })();
+    </script>
+    <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}[data-split]{visibility:visible!important}</style></noscript>
+
+    <ClientRouter fallback="swap" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.nav.skip}</a>
+
+    <div class="scene" data-scene-host aria-hidden="true" transition:persist="scene">
+      <div class="scene__glow"></div>
+      <Logo kind="monogram" class="scene__fallback" />
+    </div>
+    <div class="grain" aria-hidden="true" transition:persist="grain"></div>
+
+    <Header lang={lang} page={page} />
+
+    <main id="main" class="page">
+      <slot />
+    </main>
+
+    <Footer lang={lang} />
+    {page && <NextPage lang={lang} page={page} />}
+
+    <ChatWidget lang={lang} />
+    <Curtain />
+    <div class="cursor is-hidden" data-cursor-root aria-hidden="true" transition:persist="cursor">
+      <div class="cursor__dot"></div>
+      <div class="cursor__ring"><span></span></div>
+    </div>
+
+    <script>
+      import '../scripts/app';
+    </script>
+  </body>
+</html>

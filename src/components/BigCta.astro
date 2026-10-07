@@ -1,0 +1,24 @@
+---
+import Btn from './Btn.astro';
+import { useT, path, contact, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<section class="section bigcta" data-shape="ring" data-place="center" data-opacity="0.45">
+  <div class="container">
+    <p class="label" data-reveal>{t.tagline}</p>
+    <h2 class="display" style="margin-top:28px" data-split>
+      {t.home.ctaTitleA} <span class="thin">{t.home.ctaTitleB}</span>
+    </h2>
+    <p class="lead" data-reveal>{t.home.ctaText}</p>
+    <div class="hero__actions" data-reveal>
+      <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
+      <Btn href={contact.booking || path(lang, 'contact')} variant="ghost" icon={false}>{t.nav.bookLong}</Btn>
+    </div>
+  </div>
+</section>

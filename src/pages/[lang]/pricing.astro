@@ -1,0 +1,161 @@
+---
+import Base from '../../layouts/Base.astro';
+import Btn from '../../components/Btn.astro';
+import BigCta from '../../components/BigCta.astro';
+import { useT, path, contact, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const p = t.pricingPage;
+const bookHref = contact.booking || path(lang, 'contact');
+const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null);
+---
+
+<Base lang={lang} page="pricing">
+  <section class="phero" data-shape="ring" data-place="corner">
+    <div class="container">
+      <p class="label" data-reveal>{p.label}</p>
+      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
+      <p class="lead" data-reveal>{p.lead}</p>
+    </div>
+  </section>
+
+  <!-- Các gói -->
+  <section class="section--tight" style="padding-top:0" data-shape="galaxy" data-place="center" data-opacity="0.7">
+    <div class="container">
+      <div class="plans">
+        {
+          p.plans.map((plan, i) => (
+            <article class:list={['plan', plan.featured && 'plan--featured', plan.id === 'signature' && 'plan--signature']} data-reveal>
+              <header class="plan__head">
+                <span class="plan__num num">0{i + 1}</span>
+                {plan.featured && <span class="plan__badge">{p.recommended}</span>}
+              </header>
+              <h2 class="plan__name">{plan.name}</h2>
+              <p class="plan__for">{plan.for}</p>
+              <p class="plan__price">
+                <small>{p.from}</small>
+                <span class="num">${plan.price}</span>
+              </p>
+              <ul class="plan__list">
+                {plan.features.map((f) => <li>{f}</li>)}
+              </ul>
+              <Btn href={bookHref} variant={plan.featured ? 'primary' : 'ghost'} class="plan__cta">
+                {p.choose}
+              </Btn>
+            </article>
+          ))
+        }
+      </div>
+      <p class="plans__note">{p.note}</p>
+    </div>
+  </section>
+
+  <!-- Gói nào cũng có + tùy chọn thêm -->
+  <section class="section--tight">
+    <div class="container incl">
+      <div data-reveal>
+        <p class="label">{p.includedTitle}</p>
+        <ul class="incl__list">
+          {p.included.map((x) => <li>{x}</li>)}
+        </ul>
+      </div>
+      <div data-reveal>
+        <p class="label">{p.addonsTitle}</p>
+        <ul class="addons">
+          {
+            p.addons.map((a) => (
+              <li>
+                <span>{a.name}</span>
+                <span class="addons__price">
+                  <strong class="num">{a.price}</strong> <small>{a.unit}</small>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- So sánh -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="shead">
+        <div>
+          <p class="label">{p.label}</p>
+          <h2 class="h2" data-split>{p.compareTitle}</h2>
+        </div>
+      </div>
+      <div class="compare-wrap" data-reveal data-lenis-prevent-horizontal>
+        <table class="compare">
+          <thead>
+            <tr>
+              <th scope="col">{p.compareFeature}</th>
+              {p.plans.map((plan) => <th scope="col" class:list={[plan.featured && 'is-featured']}>{plan.name}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              p.compare.map((row) => (
+                <tr>
+                  <th scope="row">{row[0]}</th>
+                  {row.slice(1).map((v, j) => {
+                    const c = cell(v);
+                    return (
+                      <td class:list={[p.plans[j].featured && 'is-featured']}>
+                        {c ? (
+                          <span class={`mark mark--${c}`} title={p.compareLegend[c]}>
+                            <span class="sr-only">{p.compareLegend[c]}</span>
+                          </span>
+                        ) : (
+                          v
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="compare__legend">
+        <span><span class="mark mark--yes"></span>{p.compareLegend.yes}</span>
+        <span><span class="mark mark--add"></span>{p.compareLegend.add}</span>
+        <span><span class="mark mark--no"></span>{p.compareLegend.no}</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ giá -->
+  <section class="section" data-shape="sphere" data-place="left" data-opacity="0.55">
+    <div class="container faq-wrap">
+      <div>
+        <p class="label">FAQ</p>
+        <h2 class="h2" style="margin-top:24px" data-split>{p.faqTitle}</h2>
+      </div>
+      <div class="faq">
+        {
+          p.faq.map((f) => (
+            <details data-reveal>
+              <summary>
+                {f.q}
+                <span class="faq__plus" aria-hidden="true" />
+              </summary>
+              <div class="faq__a">
+                <p>{f.a}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <BigCta lang={lang} />
+</Base>
