@@ -16,7 +16,7 @@ Repo đã có sẵn `Dockerfile` (build Astro → phục vụ bằng Nginx) và 
 
 1. Dokploy → **Create Application** → Provider **GitHub** → repo `thanledinh/onespeedy`, branch `main`.
 2. **Build Type:** `Dockerfile` (Docker File: `Dockerfile`, Build Path: `/`).
-3. **Domains:** thêm tên miền, **Container Port = 80**, bật HTTPS.
+3. **Domains:** thêm tên miền, **Container Port = 80** (hoặc để mặc định 3000 cũng chạy), bật HTTPS.
 4. Bật **Autodeploy** để mỗi lần push lên `main` là tự build lại.
 
 Kiểm tra sau khi chạy: `https://<tên-miền>/healthz` trả về `ok`.
