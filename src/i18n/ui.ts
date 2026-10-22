@@ -5,23 +5,33 @@ export const languages = { vi: 'Tiếng Việt', en: 'English' } as const;
 export type Lang = keyof typeof languages;
 export const defaultLang: Lang = 'vi';
 
-export type PageKey = 'home' | 'services' | 'pricing' | 'lab' | 'work' | 'about' | 'contact';
+export type PageKey = 'home' | 'services' | 'pricing' | 'work' | 'about' | 'contact';
 
 export const routes: Record<PageKey, string> = {
   home: '',
   services: 'services/',
   pricing: 'pricing/',
-  lab: 'lab/',
   work: 'work/',
   about: 'about/',
   contact: 'contact/',
 };
 
 // Thứ tự trang cho hiệu ứng "cuộn tiếp để sang trang sau"
-export const pageOrder: PageKey[] = ['home', 'services', 'pricing', 'lab', 'work', 'about', 'contact'];
+export const pageOrder: PageKey[] = ['home', 'services', 'pricing', 'work', 'about', 'contact'];
 export function nextPage(page: PageKey): PageKey {
   return pageOrder[(pageOrder.indexOf(page) + 1) % pageOrder.length];
 }
+
+// Hình hạt 3D riêng của mỗi trang: hiện ở đầu trang đó, và ở cuối trang trước để báo trước trang sau.
+// Đổi ở đây thì đổi luôn data-shape ở section đầu của trang tương ứng.
+export const pageShape: Record<PageKey, string> = {
+  home: 'ring',
+  services: 'layers',
+  pricing: 'bars',
+  work: 'knot',
+  about: 'helix',
+  contact: 'bubble',
+};
 
 export function path(lang: Lang, page: PageKey) {
   return `/${lang}/${routes[page]}`;
@@ -57,10 +67,6 @@ const vi = {
       title: 'Bảng giá thiết kế website — OneSpeedy',
       description: 'Bảng giá minh bạch cho landing page, website doanh nghiệp, thương mại điện tử và website 3D cao cấp.',
     },
-    lab: {
-      title: 'Lab — Thử nghiệm 3D & chuyển động — OneSpeedy',
-      description: 'Phòng thí nghiệm của OneSpeedy: hạt, shader và hiệu ứng 3D chạy trực tiếp trên trình duyệt.',
-    },
     work: {
       title: 'Dự án — OneSpeedy',
       description: 'Các hướng thiết kế và dự án website của OneSpeedy.',
@@ -78,7 +84,6 @@ const vi = {
     home: 'Trang chủ',
     services: 'Dịch vụ',
     pricing: 'Bảng giá',
-    lab: 'Lab',
     work: 'Dự án',
     about: 'Về chúng tôi',
     contact: 'Liên hệ',
@@ -408,24 +413,6 @@ const vi = {
       },
     ],
   },
-  labPage: {
-    label: 'Lab',
-    titleA: 'Phòng thí nghiệm',
-    titleB: 'chuyển động & 3D.',
-    lead: 'Nơi chúng tôi thử nghiệm những kỹ thuật sẽ đưa vào website của khách hàng. Mọi thứ bạn thấy đều chạy trực tiếp trên trình duyệt, theo thời gian thực.',
-    hud: { particles: 'Hạt', fps: 'FPS', engine: 'Engine' },
-    explode: 'Kích nổ',
-    note: 'Tất cả thử nghiệm dùng chung một bộ hạt duy nhất — chúng chỉ biến hình khi bạn cuộn.',
-    experiments: [
-      { shape: 'ring', title: 'Logo bằng hạt', text: 'Logo OneSpeedy dựng lại từ hàng nghìn hạt sáng. Hạt né theo con trỏ chuột rồi tự hội tụ lại.', tags: ['GLSL', 'Three.js', 'Points'] },
-      { shape: 'sphere', title: 'Địa cầu Fibonacci', text: 'Hạt phân bố đều trên mặt cầu theo dãy Fibonacci — không cụm, không hở — và xoay ngay trên GPU.', tags: ['Fibonacci', 'GPU'] },
-      { shape: 'wave', title: 'Mặt sóng', text: 'Lưới hạt dao động bằng các hàm sin chồng lên nhau, tính hoàn toàn trong vertex shader nên không tốn CPU.', tags: ['Vertex shader', 'Sine field'] },
-      { shape: 'galaxy', title: 'Thiên hà xoắn ốc', text: 'Ba nhánh xoắn, dày ở lõi và thưa dần ra ngoài, xoay chậm theo thời gian.', tags: ['Procedural'] },
-      { shape: 'helix', title: 'Xoắn kép', text: 'Hai dải hạt quấn quanh nhau như chuỗi DNA — thiết kế và công nghệ luôn đi cùng nhau.', tags: ['Parametric'] },
-      { shape: 'knot', title: 'Nút vô tận', text: 'Một nút xuyến (torus knot) liền mạch, không có điểm đầu cũng không có điểm cuối.', tags: ['Torus knot', 'Math'] },
-      { shape: 'frame', title: 'Website bằng hạt', text: 'Một khung trình duyệt dựng hoàn toàn bằng hạt — thứ chúng tôi làm mỗi ngày, theo một cách khác.', tags: ['Morphing'] },
-    ],
-  },
   next: {
     label: 'Cuộn tiếp để sang trang sau',
     hint: 'Trang tiếp theo',
@@ -495,10 +482,6 @@ const en: typeof vi = {
       title: 'Website design pricing — OneSpeedy',
       description: 'Transparent pricing for landing pages, corporate websites, e-commerce and premium 3D websites.',
     },
-    lab: {
-      title: 'Lab — 3D & motion experiments — OneSpeedy',
-      description: "OneSpeedy's lab: particles, shaders and 3D effects running live in your browser.",
-    },
     work: {
       title: 'Work — OneSpeedy',
       description: 'Design directions and website projects by OneSpeedy.',
@@ -516,7 +499,6 @@ const en: typeof vi = {
     home: 'Home',
     services: 'Services',
     pricing: 'Pricing',
-    lab: 'Lab',
     work: 'Work',
     about: 'About',
     contact: 'Contact',
@@ -843,24 +825,6 @@ const en: typeof vi = {
         q: "I'm not sure which plan fits.",
         a: "Book a 15-minute call. We'll listen to your goals and recommend the right plan — even if it's the smallest one.",
       },
-    ],
-  },
-  labPage: {
-    label: 'Lab',
-    titleA: 'A laboratory',
-    titleB: 'for motion & 3D.',
-    lead: "Where we experiment with techniques that end up in our clients' websites. Everything you see runs live in your browser, in real time.",
-    hud: { particles: 'Particles', fps: 'FPS', engine: 'Engine' },
-    explode: 'Explode',
-    note: 'Every experiment shares a single particle system — it simply morphs as you scroll.',
-    experiments: [
-      { shape: 'ring', title: 'Particle logo', text: 'The OneSpeedy logo rebuilt from thousands of glowing particles. They dodge your cursor and gather back together.', tags: ['GLSL', 'Three.js', 'Points'] },
-      { shape: 'sphere', title: 'Fibonacci globe', text: 'Particles spread evenly over a sphere using the Fibonacci sequence — no clumps, no gaps — spinning on the GPU.', tags: ['Fibonacci', 'GPU'] },
-      { shape: 'wave', title: 'Wave field', text: 'A particle grid driven by layered sine waves, computed entirely in the vertex shader at zero CPU cost.', tags: ['Vertex shader', 'Sine field'] },
-      { shape: 'galaxy', title: 'Spiral galaxy', text: 'Three spiral arms, dense at the core and fading outwards, slowly rotating over time.', tags: ['Procedural'] },
-      { shape: 'helix', title: 'Double helix', text: 'Two strands of particles wound around each other like DNA — design and technology, always together.', tags: ['Parametric'] },
-      { shape: 'knot', title: 'Endless knot', text: 'A seamless torus knot with no beginning and no end.', tags: ['Torus knot', 'Math'] },
-      { shape: 'frame', title: 'A website of particles', text: 'A browser window built entirely from particles — what we make every day, done differently.', tags: ['Morphing'] },
     ],
   },
   next: {

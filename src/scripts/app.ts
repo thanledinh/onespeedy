@@ -338,7 +338,6 @@ function initPage(firstLoad: boolean) {
   initHeader();
   initChat();
   initNextPage();
-  initLab();
   ScrollTrigger.refresh();
 }
 
@@ -540,33 +539,6 @@ function initNextPage() {
       }
     },
   });
-}
-
-// ------------------------------------------------------------
-// Trang Lab: nút "kích nổ" + bảng thông số trực tiếp
-// ------------------------------------------------------------
-let fpsRaf = 0;
-function initLab() {
-  document.querySelectorAll<HTMLButtonElement>('[data-explode]').forEach((b) =>
-    b.addEventListener('click', () => scene?.pulse()),
-  );
-  cancelAnimationFrame(fpsRaf);
-  const fpsEl = document.querySelector<HTMLElement>('[data-hud-fps]');
-  const countEl = document.querySelector<HTMLElement>('[data-hud-count]');
-  if (!fpsEl) return;
-  let frames = 0;
-  let last = performance.now();
-  const loop = (now: number) => {
-    frames++;
-    if (now - last >= 500) {
-      fpsEl.textContent = String(Math.round((frames * 1000) / (now - last)));
-      frames = 0;
-      last = now;
-      if (countEl && scene) countEl.textContent = scene.count.toLocaleString('en-US');
-    }
-    fpsRaf = requestAnimationFrame(loop);
-  };
-  fpsRaf = requestAnimationFrame(loop);
 }
 
 function initChat() {

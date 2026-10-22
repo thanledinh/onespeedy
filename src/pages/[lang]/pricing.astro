@@ -16,7 +16,7 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
 ---
 
 <Base lang={lang} page="pricing">
-  <section class="phero" data-shape="ring" data-place="corner">
+  <section class="phero" data-shape="bars" data-place="corner">
     <div class="container">
       <p class="label" data-reveal>{p.label}</p>
       <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
@@ -25,7 +25,7 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
   </section>
 
   <!-- Các gói -->
-  <section class="section--tight" style="padding-top:0" data-shape="galaxy" data-place="center" data-opacity="0.7">
+  <section class="section--tight" style="padding-top:0" data-shape="bars" data-place="center" data-opacity="0.45">
     <div class="container">
       <div class="plans">
         {
@@ -133,7 +133,7 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
   </section>
 
   <!-- FAQ giá -->
-  <section class="section" data-shape="sphere" data-place="left" data-opacity="0.55">
+  <section class="section" data-shape="bars" data-place="left" data-opacity="0.55">
     <div class="container faq-wrap">
       <div>
         <p class="label">FAQ</p>

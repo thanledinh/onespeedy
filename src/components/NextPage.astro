@@ -1,6 +1,6 @@
 ---
 // Cuối mỗi trang: cuộn tiếp thì vòng tròn vẽ đầy và tự chuyển sang trang sau (như Lusion).
-import { useT, path, nextPage, type Lang, type PageKey } from '../i18n/ui';
+import { useT, path, nextPage, pageShape, type Lang, type PageKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -11,7 +11,7 @@ const t = useT(lang);
 const next = nextPage(page);
 ---
 
-<section class="nextp" data-nextp data-shape="ring" data-place="center" data-opacity="0.18">
+<section class="nextp" data-nextp data-shape={pageShape[next]} data-place="center" data-opacity="0.18">
   <a class="nextp__link" href={path(lang, next)} data-nextp-link data-cursor={t.next.hint}>
     <span class="label">{t.next.label}</span>
     <svg class="nextp__ring" viewBox="0 0 100 100" fill="none" aria-hidden="true">

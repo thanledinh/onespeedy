@@ -35,14 +35,14 @@ Gắn `data-shape` lên bất kỳ section nào để hạt biến thành hình 
 <section data-shape="sphere" data-place="left" data-opacity="0.6">
 ```
 
-- Hình: `ring`, `sphere`, `wave`, `galaxy`, `frame`, `helix`, `knot`
+- Hình: `ring`, `sphere`, `wave`, `helix`, `knot`, `layers`, `bars`, `bubble`
 - Vị trí: `hero`, `corner`, `right`, `left`, `center`
 
 ## Cấu trúc
 
 | Đường dẫn | Nội dung |
 | --- | --- |
-| `src/pages/[lang]/` | Các trang: trang chủ, dịch vụ, bảng giá, lab, dự án, về chúng tôi, liên hệ |
+| `src/pages/[lang]/` | Các trang: trang chủ, dịch vụ, bảng giá, dự án, về chúng tôi, liên hệ |
 | `src/layouts/Base.astro` | Khung chung: SEO, hreflang, font, header, footer, chat |
 | `src/scripts/scene.ts` | Cảnh 3D: hạt sáng tạo thành chữ O của logo (tải trễ) |
 | `src/scripts/app.ts` | Cuộn mượt, hiệu ứng chữ, chuyển trang, con trỏ, form, chat |

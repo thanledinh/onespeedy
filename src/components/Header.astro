@@ -9,7 +9,7 @@ interface Props {
 }
 const { lang, page } = Astro.props;
 const t = useT(lang);
-const links: PageKey[] = ['services', 'pricing', 'work', 'lab', 'about', 'contact'];
+const links: PageKey[] = ['services', 'pricing', 'work', 'about', 'contact'];
 const bookHref = contact.booking || path(lang, 'contact');
 const other: Lang = lang === 'vi' ? 'en' : 'vi';
 const samePage = (l: Lang) => path(l, page ?? 'home');

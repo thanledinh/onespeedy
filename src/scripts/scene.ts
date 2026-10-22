@@ -1,11 +1,12 @@
 // Cảnh WebGL nền: hàng nghìn hạt sáng biến hình theo từng section khi cuộn.
 //   ring   — chữ O của logo (hero, CTA)
 //   sphere — quả địa cầu (Việt Nam & quốc tế)
-//   wave   — mặt sóng (dịch vụ)
-//   galaxy — thiên hà xoắn ốc (quy trình)
-//   frame  — khung trình duyệt website (dự án)
-//   helix  — xoắn kép (lab)
-//   knot   — nút xuyến vô tận (lab)
+//   wave   — mặt sóng (dịch vụ, quy trình)
+//   helix  — xoắn kép (giới thiệu)
+//   knot   — nút xuyến vô tận (dự án)
+//   layers — ba lớp chồng nhau: thiết kế, lập trình, SEO (dịch vụ)
+//   bars   — ba cột tăng dần (bảng giá)
+//   bubble — bong bóng chat có ba chấm đang gõ (liên hệ)
 // Giữa hai section, hạt vỡ ra rồi gộp lại thành hình mới. Canvas được giữ qua các lần chuyển trang.
 import {
   AdditiveBlending,
@@ -38,7 +39,7 @@ const GAP_TO = (58.6 * Math.PI) / 180;
 const DOT_ANGLE = (40 * Math.PI) / 180;
 const DOT_R = 71 / 385;
 
-export const SHAPES = ['ring', 'sphere', 'wave', 'galaxy', 'frame', 'helix', 'knot'] as const;
+export const SHAPES = ['ring', 'sphere', 'wave', 'helix', 'knot', 'layers', 'bars', 'bubble'] as const;
 export type ShapeName = (typeof SHAPES)[number];
 export type Place = 'hero' | 'corner' | 'right' | 'left' | 'center';
 
@@ -56,17 +57,18 @@ const vertex = /* glsl */ `
   uniform float uSize;
   uniform float uPixelRatio;
   uniform float uBreak;
-  uniform vec4 uWa;   // ring, sphere, wave, galaxy
-  uniform vec4 uWb;   // frame, helix, knot, (trống)
+  uniform vec4 uWa;   // ring, sphere, wave, helix
+  uniform vec4 uWb;   // knot, layers, bars, bubble
   uniform vec2 uMouse;
   uniform float uMouseForce;
   attribute vec3 aScatter;
   attribute vec3 aSphere;
   attribute vec3 aWave;
-  attribute vec3 aGalaxy;
-  attribute vec3 aFrame;
   attribute vec3 aHelix;
   attribute vec3 aKnot;
+  attribute vec3 aLayers;
+  attribute vec3 aBars;
+  attribute vec3 aBubble;
   attribute vec4 aRand; // x: size, y: phase, z: color, w: speed
   varying float vColor;
   varying float vAlpha;
@@ -82,13 +84,6 @@ const vertex = /* glsl */ `
     wav.y += sin(wav.x * 2.4 + uTime * 0.9) * 0.14 + cos(wav.z * 3.2 + uTime * 0.7) * 0.09;
     wav.yz = rot(-0.62) * wav.yz;
 
-    vec3 gal = aGalaxy;
-    gal.xz = rot(uTime * 0.07) * gal.xz;
-    gal.yz = rot(-1.05) * gal.yz;
-
-    vec3 frm = aFrame;
-    frm.y += sin(uTime * 0.8 + frm.x) * 0.02;
-
     vec3 hel = aHelix;
     hel.xz = rot(uTime * 0.35) * hel.xz;
     hel.xy = rot(0.5) * hel.xy;
@@ -97,8 +92,27 @@ const vertex = /* glsl */ `
     knt.xy = rot(uTime * 0.12) * knt.xy;
     knt.yz = rot(sin(uTime * 0.2) * 0.4) * knt.yz;
 
-    vec3 shape = position * uWa.x + sph * uWa.y + wav * uWa.z + gal * uWa.w
-      + frm * uWb.x + hel * uWb.y + knt * uWb.z;
+    // Ba lớp nhấp nhô lệch pha, cả chồng xoay chậm, nhìn chéo từ trên xuống
+    vec3 lay = aLayers;
+    lay.y += sin(uTime * 0.9 + lay.y * 4.0) * 0.035;
+    lay.xz = rot(0.785 + uTime * 0.12) * lay.xz;
+    lay.yz = rot(-0.55) * lay.yz;
+
+    // Từng cột "thở" lệch pha, cả cụm lắc qua lại để thấy khối 3D
+    vec3 bar = aBars;
+    bar.y = -0.9 + (bar.y + 0.9) * (0.93 + 0.07 * sin(uTime * 1.1 - bar.x * 2.2));
+    bar.xz = rot(0.55 + sin(uTime * 0.3) * 0.35) * bar.xz;
+    bar.yz = rot(-0.18) * bar.yz;
+
+    // Ba chấm nảy lần lượt như đang gõ, bong bóng đung đưa nhẹ
+    vec3 bub = aBubble;
+    float isDot = step(abs(bub.y), 0.15) * step(abs(bub.x), 0.58);
+    bub.y += isDot * pow(max(0.0, sin(uTime * 4.0 - bub.x * 4.5)), 3.0) * 0.12;
+    bub.xy = rot(sin(uTime * 0.5) * 0.06) * bub.xy;
+    bub.xz = rot(sin(uTime * 0.3) * 0.25) * bub.xz;
+
+    vec3 shape = position * uWa.x + sph * uWa.y + wav * uWa.z + hel * uWa.w
+      + knt * uWb.x + lay * uWb.y + bar * uWb.z + bub * uWb.w;
 
     // --- Hội tụ lúc mở đầu ---
     float delay = aRand.y * 0.55;
@@ -204,89 +218,6 @@ function wavePoints(n: number) {
   return shuffle(out, n);
 }
 
-function galaxyPoints(n: number) {
-  const out = new Float32Array(n * 3);
-  const arms = 3;
-  for (let i = 0; i < n; i++) {
-    const r = Math.pow(Math.random(), 0.65) * 1.45;
-    const arm = ((i % arms) / arms) * Math.PI * 2;
-    const spin = r * 2.8;
-    const spread = (gauss() * 0.42) / (r + 0.35);
-    const a = arm + spin + spread;
-    out[i * 3] = Math.cos(a) * r + gauss() * 0.03;
-    out[i * 3 + 1] = gauss() * 0.06 * (1.5 - r);
-    out[i * 3 + 2] = Math.sin(a) * r + gauss() * 0.03;
-  }
-  return out;
-}
-
-/** Khung trình duyệt: viền, thanh tiêu đề, 3 chấm, dòng chữ, nút, khối ảnh */
-function framePoints(n: number) {
-  const out = new Float32Array(n * 3);
-  const W = 2.5;
-  const H = 1.65;
-  const x0 = -W / 2;
-  const y0 = H / 2;
-  const barY = y0 - 0.22;
-  const rect = (u: number, v: number, w: number, h: number) => [u + Math.random() * w, v - Math.random() * h];
-  const line = (ax: number, ay: number, bx: number, by: number) => {
-    const t = Math.random();
-    return [ax + (bx - ax) * t, ay + (by - ay) * t];
-  };
-  for (let i = 0; i < n; i++) {
-    const k = Math.random();
-    let x: number, y: number;
-    if (k < 0.34) {
-      // viền ngoài
-      const per = Math.random() * 2 * (W + H);
-      if (per < W) [x, y] = [x0 + per, y0];
-      else if (per < W + H) [x, y] = [x0 + W, y0 - (per - W)];
-      else if (per < 2 * W + H) [x, y] = [x0 + W - (per - W - H), y0 - H];
-      else [x, y] = [x0, y0 - H + (per - 2 * W - H)];
-      x += gauss() * 0.008;
-      y += gauss() * 0.008;
-    } else if (k < 0.42) {
-      [x, y] = line(x0, barY, x0 + W, barY);
-    } else if (k < 0.47) {
-      // 3 chấm
-      const c = Math.floor(Math.random() * 3);
-      const a = Math.random() * Math.PI * 2;
-      const rr = Math.sqrt(Math.random()) * 0.035;
-      x = x0 + 0.14 + c * 0.11 + Math.cos(a) * rr;
-      y = y0 - 0.11 + Math.sin(a) * rr;
-    } else if (k < 0.6) {
-      // hai dòng tiêu đề
-      const row = Math.random() < 0.5 ? 0 : 1;
-      [x, y] = rect(x0 + 0.2, barY - 0.32 - row * 0.16, row ? 0.85 : 1.05, 0.07);
-    } else if (k < 0.65) {
-      // dòng phụ
-      [x, y] = rect(x0 + 0.2, barY - 0.7, 0.7, 0.03);
-    } else if (k < 0.72) {
-      // nút
-      [x, y] = rect(x0 + 0.2, barY - 0.88, 0.42, 0.12);
-    } else {
-      // khối ảnh bên phải (viền + lấp mờ)
-      const bx = x0 + W * 0.56;
-      const bw = W * 0.36;
-      const by = barY - 0.2;
-      const bh = H - 0.62;
-      if (Math.random() < 0.55) {
-        const per = Math.random() * 2 * (bw + bh);
-        if (per < bw) [x, y] = [bx + per, by];
-        else if (per < bw + bh) [x, y] = [bx + bw, by - (per - bw)];
-        else if (per < 2 * bw + bh) [x, y] = [bx + bw - (per - bw - bh), by - bh];
-        else [x, y] = [bx, by - bh + (per - 2 * bw - bh)];
-      } else {
-        [x, y] = rect(bx, by, bw, bh);
-      }
-    }
-    out[i * 3] = x;
-    out[i * 3 + 1] = y;
-    out[i * 3 + 2] = gauss() * 0.03;
-  }
-  return out;
-}
-
 /** Xoắn kép: hai dải hạt quấn quanh trục đứng, có các "bậc" nối giữa */
 function helixPoints(n: number) {
   const out = new Float32Array(n * 3);
@@ -347,6 +278,134 @@ function knotPoints(n: number) {
   return out;
 }
 
+/** Ba lớp mặt phẳng chồng nhau: viền vuông + lưới chấm */
+function layersPoints(n: number) {
+  const out = new Float32Array(n * 3);
+  const S = 1.5;
+  const GAP = 0.42;
+  const G = 24;
+  for (let i = 0; i < n; i++) {
+    const layer = i % 3;
+    let x: number, z: number;
+    if (Math.random() < 0.4) {
+      // viền
+      const per = Math.random() * 4 * S;
+      const side = Math.floor(per / S);
+      const t = per - side * S - S / 2;
+      [x, z] = side === 0 ? [t, -S / 2] : side === 1 ? [S / 2, t] : side === 2 ? [-t, S / 2] : [-S / 2, -t];
+      x += gauss() * 0.006;
+      z += gauss() * 0.006;
+    } else {
+      // lưới chấm: nhiều hạt dồn vào cùng một nút nên nút sáng hơn
+      x = (Math.floor(Math.random() * G) / (G - 1) - 0.5) * S + gauss() * 0.004;
+      z = (Math.floor(Math.random() * G) / (G - 1) - 0.5) * S + gauss() * 0.004;
+    }
+    out[i * 3] = x;
+    out[i * 3 + 1] = (layer - 1) * GAP + gauss() * 0.008;
+    out[i * 3 + 2] = z;
+  }
+  return shuffle(out, n);
+}
+
+/** Ba cột tăng dần: khung hộp, nắp sáng, vạch ngang ở mặt trước, thêm đường đáy */
+function barsPoints(n: number) {
+  const out = new Float32Array(n * 3);
+  const heights = [0.85, 1.3, 1.8];
+  const W = 0.42;
+  const STEP = W + 0.2;
+  const BASE = -0.9;
+  const total = heights.reduce((s, h) => s + h + 0.6, 0);
+  for (let i = 0; i < n; i++) {
+    let x: number, y: number, z: number;
+    if (Math.random() < 0.05) {
+      // đường đáy chung
+      out[i * 3] = (Math.random() - 0.5) * 2.1;
+      out[i * 3 + 1] = BASE + gauss() * 0.006;
+      out[i * 3 + 2] = gauss() * 0.01;
+      continue;
+    }
+    // Cột cao nhận nhiều hạt hơn để mật độ đều
+    let r = Math.random() * total;
+    let b = 0;
+    while (b < 2 && r > heights[b] + 0.6) r -= heights[b++] + 0.6;
+    const h = heights[b];
+    const k = Math.random();
+    if (k < 0.62) {
+      // 12 cạnh hộp: 4 cạnh đứng, 4 cạnh đáy, 4 cạnh nắp
+      const e = Math.floor(Math.random() * 12);
+      const t = Math.random();
+      if (e < 4) {
+        x = (e & 1 ? 0.5 : -0.5) * W;
+        z = (e & 2 ? 0.5 : -0.5) * W;
+        y = BASE + t * h;
+      } else {
+        const j = e % 4;
+        const s = (t - 0.5) * W;
+        const side = (j & 1 ? 0.5 : -0.5) * W;
+        y = BASE + (e >= 8 ? h : 0);
+        [x, z] = j < 2 ? [s, side] : [side, s];
+      }
+      x += gauss() * 0.006;
+      y += gauss() * 0.006;
+      z += gauss() * 0.006;
+    } else if (k < 0.85) {
+      // nắp
+      x = (Math.random() - 0.5) * W;
+      y = BASE + h;
+      z = (Math.random() - 0.5) * W;
+    } else {
+      // vạch ngang mặt trước
+      x = (Math.random() - 0.5) * W;
+      y = BASE + Math.floor(Math.random() * (h / 0.12)) * 0.12;
+      z = W / 2;
+    }
+    out[i * 3] = (b - 1) * STEP + x;
+    out[i * 3 + 1] = y;
+    out[i * 3 + 2] = z;
+  }
+  return out;
+}
+
+/** Bong bóng chat: viền elip chừa chỗ nối đuôi, đuôi nhọn góc dưới trái, ba chấm */
+function bubblePoints(n: number) {
+  const out = new Float32Array(n * 3);
+  const RX = 1.2;
+  const RY = 0.82;
+  const A1 = (205 * Math.PI) / 180;
+  const A2 = (235 * Math.PI) / 180;
+  const p1 = [Math.cos(A1) * RX, Math.sin(A1) * RY];
+  const p2 = [Math.cos(A2) * RX, Math.sin(A2) * RY];
+  const tip = [-1.05, -1.2];
+  for (let i = 0; i < n; i++) {
+    const k = Math.random();
+    let x: number, y: number;
+    if (k < 0.63) {
+      // viền, bỏ cung giữa A1 và A2; một ít hạt toả ra làm quầng
+      const a = A2 + Math.random() * (Math.PI * 2 - (A2 - A1));
+      const spread = k < 0.56 ? gauss() * 0.035 : gauss() * 0.14;
+      x = Math.cos(a) * (RX + spread);
+      y = Math.sin(a) * (RY + spread);
+    } else if (k < 0.73) {
+      // đuôi: hai cạnh từ viền xuống mũi nhọn
+      const [a, b] = Math.random() < 0.5 ? [p1, tip] : [tip, p2];
+      const t = Math.random();
+      x = a[0] + (b[0] - a[0]) * t + gauss() * 0.01;
+      y = a[1] + (b[1] - a[1]) * t + gauss() * 0.01;
+    } else {
+      // ba chấm
+      const c = Math.floor(Math.random() * 3);
+      const a = Math.random() * Math.PI * 2;
+      const rr = Math.sqrt(Math.random()) * 0.12;
+      x = (c - 1) * 0.42 + Math.cos(a) * rr;
+      y = Math.sin(a) * rr;
+    }
+    out[i * 3] = x;
+    out[i * 3 + 1] = y;
+    out[i * 3 + 2] = gauss() * 0.05;
+  }
+  return out;
+}
+
 function shuffle(arr: Float32Array, n: number) {
   // Xáo thứ tự để khi biến hình, các hạt bay chéo nhau thay vì trượt đều
   for (let i = n - 1; i > 0; i--) {
@@ -379,7 +438,6 @@ const smoothstep = (a: number, b: number, x: number) => {
 };
 
 export interface SceneAPI {
-  count: number;
   setAnchors(list: Anchor[], immediate?: boolean): void;
   pulse(): void;
   destroy(): void;
@@ -434,10 +492,11 @@ export function createScene(host: HTMLElement, opts: { reducedMotion: boolean })
   geo.setAttribute('aScatter', new BufferAttribute(scatter, 3));
   geo.setAttribute('aSphere', new BufferAttribute(spherePoints(COUNT), 3));
   geo.setAttribute('aWave', new BufferAttribute(wavePoints(COUNT), 3));
-  geo.setAttribute('aGalaxy', new BufferAttribute(galaxyPoints(COUNT), 3));
-  geo.setAttribute('aFrame', new BufferAttribute(framePoints(COUNT), 3));
   geo.setAttribute('aHelix', new BufferAttribute(helixPoints(COUNT), 3));
   geo.setAttribute('aKnot', new BufferAttribute(knotPoints(COUNT), 3));
+  geo.setAttribute('aLayers', new BufferAttribute(layersPoints(COUNT), 3));
+  geo.setAttribute('aBars', new BufferAttribute(barsPoints(COUNT), 3));
+  geo.setAttribute('aBubble', new BufferAttribute(bubblePoints(COUNT), 3));
   geo.setAttribute('aRand', new BufferAttribute(rand, 4));
 
   const uniforms = {
@@ -481,7 +540,7 @@ export function createScene(host: HTMLElement, opts: { reducedMotion: boolean })
   }
   const dgeo = new BufferGeometry();
   dgeo.setAttribute('position', new BufferAttribute(dpos, 3));
-  for (const name of ['aScatter', 'aSphere', 'aWave', 'aGalaxy', 'aFrame', 'aHelix', 'aKnot']) {
+  for (const name of ['aScatter', 'aSphere', 'aWave', 'aHelix', 'aKnot', 'aLayers', 'aBars', 'aBubble']) {
     dgeo.setAttribute(name, new BufferAttribute(dpos, 3));
   }
   dgeo.setAttribute('aRand', new BufferAttribute(drand, 4));
@@ -565,7 +624,7 @@ export function createScene(host: HTMLElement, opts: { reducedMotion: boolean })
   let anchors: Anchor[] = [{ y: 0, shape: 'ring', place: 'corner', opacity: 1 }];
   let ySmooth = window.scrollY;
   const current = { x: 0, y: 0, scale: 1, opacity: 1 };
-  const weights = [1, 0, 0, 0, 0, 0, 0];
+  const weights = SHAPES.map(() => 0);
 
   function sample(y: number) {
     const n = anchors.length;
@@ -655,7 +714,7 @@ export function createScene(host: HTMLElement, opts: { reducedMotion: boolean })
     weights[SHAPES.indexOf(s.a.shape)] += 1 - s.m;
     weights[SHAPES.indexOf(s.b.shape)] += s.m;
     uniforms.uWa.value.set(weights[0], weights[1], weights[2], weights[3]);
-    uniforms.uWb.value.set(weights[4], weights[5], weights[6], 0);
+    uniforms.uWb.value.set(weights[4], weights[5], weights[6], weights[7]);
 
     if (pulseT > 0) pulseT = Math.max(0, pulseT - dt * 1.4);
     const pulse = Math.sin(pulseT * Math.PI) * 0.35;
@@ -713,7 +772,6 @@ export function createScene(host: HTMLElement, opts: { reducedMotion: boolean })
   if (import.meta.env.DEV) (window as any).__os = { root, current, uniforms, camera, renderer, frame, introStart, getAnchors: () => anchors };
 
   return {
-    count: COUNT,
     setAnchors(list, immediate = false) {
       anchors = list.length ? list : [{ y: 0, shape: 'ring', place: 'corner', opacity: 1 }];
       if (immediate) {
