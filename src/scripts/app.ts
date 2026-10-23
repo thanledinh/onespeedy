@@ -338,6 +338,7 @@ function initPage(firstLoad: boolean) {
   initHeader();
   initChat();
   initNextPage();
+  initStepArt();
   ScrollTrigger.refresh();
 }
 
@@ -539,6 +540,33 @@ function initNextPage() {
       }
     },
   });
+}
+
+// ------------------------------------------------------------
+// Hình minh hoạ trong thẻ Quy trình: đo độ dài nét, thẻ thật sự lọt vào màn hình mới vẽ
+// (dùng IntersectionObserver vì thẻ trượt ngang khi cuộn)
+// ------------------------------------------------------------
+function initStepArt() {
+  const steps = document.querySelectorAll<HTMLElement>('.step');
+  steps.forEach((s) =>
+    s.querySelectorAll<SVGGeometryElement>('.step__art .d').forEach((el) => {
+      el.style.setProperty('--len', String(Math.ceil(el.getTotalLength()) + 1));
+    }),
+  );
+  if (reduced) {
+    steps.forEach((s) => s.classList.add('is-in'));
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      }),
+    { threshold: 0.5 },
+  );
+  steps.forEach((s) => io.observe(s));
 }
 
 function initChat() {

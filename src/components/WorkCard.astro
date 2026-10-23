@@ -1,32 +1,86 @@
 ---
+// Thẻ mẫu giao diện: ảnh chụp bản máy tính + điện thoại xếp chồng.
+// Ảnh gốc ở D:\template\showcase, chép vào src/assets/mau; ghép với mẫu theo `id` (xem workPage.templates trong i18n/ui.ts).
+import { Picture } from 'astro:assets';
+import nailDesk from '../assets/mau/01-nail-atelier-desktop.png';
+import nailPhone from '../assets/mau/01-nail-atelier-mobile.png';
+import phoDesk from '../assets/mau/02-pho-lan-desktop.png';
+import phoDeskVi from '../assets/mau/02-pho-lan-vi-desktop.png';
+import phoPhone from '../assets/mau/02-pho-lan-mobile.png';
+import guongDesk from '../assets/mau/03-guong-ppf-desktop.png';
+import guongPhone from '../assets/mau/03-guong-ppf-mobile.png';
+import spaDesk from '../assets/mau/04-suong-spa-desktop.png';
+import spaPhone from '../assets/mau/04-suong-spa-mobile.png';
+import type { Lang, UI } from '../i18n/ui';
+
+// Phở Lan song ngữ: trang tiếng Việt dùng ảnh bản tiếng Việt
+const shots = {
+  nail: { desk: nailDesk, deskVi: nailDesk, phone: nailPhone },
+  pho: { desk: phoDesk, deskVi: phoDeskVi, phone: phoPhone },
+  guong: { desk: guongDesk, deskVi: guongDesk, phone: guongPhone },
+  spa: { desk: spaDesk, deskVi: spaDesk, phone: spaPhone },
+};
+
 interface Props {
-  title: string;
-  tag: string;
-  hue: string;
+  tpl: UI['workPage']['templates'][number];
+  lang: Lang;
   badge: string;
-  href: string;
-  cursor: string;
+  /** Có href thì cả thẻ là link (trang chủ); không thì là thẻ chi tiết có điểm nổi bật + nút liên hệ */
+  href?: string;
+  cursor?: string;
+  cta?: { text: string; href: string };
 }
-const { title, tag, hue, badge, href, cursor } = Astro.props;
+const { tpl, lang, badge, href, cursor, cta } = Astro.props;
+const s = shots[tpl.id as keyof typeof shots];
+const desk = lang === 'vi' ? s.deskVi : s.desk;
+const Tag = href ? 'a' : 'article';
+const detail = !href;
+const view = lang === 'vi' ? { desk: 'bản máy tính', phone: 'bản điện thoại' } : { desk: 'desktop view', phone: 'mobile view' };
 ---
 
-<a class="work" href={href} data-reveal data-cursor={cursor}>
+<Tag class="work" href={href} data-reveal data-cursor={cursor} id={detail ? `mau-${tpl.id}` : undefined}>
   <div class="work__media">
-    <div class={`work__art work__art--${hue}`}></div>
-    <div class="work__mock" aria-hidden="true">
-      <div class="work__bar"><i></i><i></i><i></i></div>
-      <div class="work__page">
-        <span class="work__line work__line--lg"></span>
-        <span class="work__line work__line--md"></span>
-        <span class="work__line work__line--sm"></span>
-        <span class="work__pill"></span>
-        <span class="work__img"></span>
-      </div>
-    </div>
+    <div class={`work__art work__art--${tpl.hue}`}></div>
+    <Picture
+      src={desk}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      widths={[640, 960, 1440]}
+      sizes="(max-width: 720px) 92vw, 46vw"
+      alt={`${tpl.name} — ${view.desk}`}
+      class="work__desk"
+    />
+    <Picture
+      src={s.phone}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      widths={[240, 480]}
+      sizes="(max-width: 720px) 20vw, 10vw"
+      alt={`${tpl.name} — ${view.phone}`}
+      class="work__phone"
+    />
     <span class="work__badge">{badge}</span>
   </div>
   <div class="work__meta">
-    <h3 class="h3">{title}</h3>
-    <span>{tag}</span>
+    <h3 class="h3">{tpl.name}</h3>
+    <span>{tpl.industry}</span>
   </div>
-</a>
+  {
+    detail && (
+      <div class="work__detail">
+        <p class="work__quote">“{tpl.quote}”</p>
+        <p class="work__plan">{tpl.planLine}</p>
+        <ul class="work__points">
+          {tpl.points.map((x) => (
+            <li>{x}</li>
+          ))}
+        </ul>
+        {cta && (
+          <a class="work__cta" href={cta.href}>
+            {cta.text} →
+          </a>
+        )}
+      </div>
+    )
+  }
+</Tag>

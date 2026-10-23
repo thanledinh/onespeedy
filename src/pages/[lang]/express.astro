@@ -1,0 +1,167 @@
+---
+// Gói OneSpeedy Express cho tiệm nhỏ: trang riêng, không nằm trên menu chính và chuỗi "cuộn sang trang sau".
+// Lối vào: chân trang, dòng nhỏ dưới các gói ở Bảng giá, câu hỏi cuối FAQ giá.
+import Base from '../../layouts/Base.astro';
+import Btn from '../../components/Btn.astro';
+import Fill from '../../components/Fill.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { useT, path, express, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const p = t.expressPage;
+// Còn ô trống thì chưa cho Google lập chỉ mục
+const draft = Object.values(express).some((v) => (typeof v === 'string' ? !v : !v.vi || !v.en));
+---
+
+<Base lang={lang} page="express" noindex={draft}>
+  <section class="phero" data-shape="sphere" data-place="corner" data-opacity="0.7">
+    <div class="container">
+      <p class="label" data-reveal>{p.label}</p>
+      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
+      <p class="lead" data-reveal>{p.lead}</p>
+      <dl class="xfacts" data-reveal>
+        {
+          p.facts.map((f) => (
+            <div>
+              <dt>{f.k}</dt>
+              <dd>
+                <Fill text={f.v} lang={lang} />
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      <div class="xhero__actions" data-reveal>
+        <Btn href={path(lang, 'contact')}>{p.cta}</Btn>
+        <Btn href="#xp-offer" variant="ghost">{p.ctaAlt}</Btn>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dành cho ai -->
+  <section class="section--tight">
+    <div class="container xfor">
+      <p class="label" data-reveal>{p.forLabel}</p>
+      <h2 class="h2" data-split>{p.forTitle}</h2>
+      <p class="lead" data-reveal>{p.forText}</p>
+      <p class="xfor__ind" data-reveal><Fill text={p.industries} lang={lang} /></p>
+    </div>
+  </section>
+
+  <!-- Mẫu Express đang có -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="shead">
+        <div>
+          <p class="label">{p.sampleLabel}</p>
+          <h2 class="h2" data-split>{p.sampleTitle}</h2>
+        </div>
+        <a class="link-arrow" href={path(lang, 'work')} data-reveal>
+          {p.sampleMore}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+        </a>
+      </div>
+      <div class="works works--single">
+        <WorkCard
+          tpl={t.workPage.templates.find((x) => x.id === 'nail')!}
+          lang={lang}
+          badge={t.workPage.badge}
+          cta={{ text: p.plan.cta, href: path(lang, 'contact') }}
+        />
+      </div>
+      <p class="works__note" data-reveal>{t.workPage.note}</p>
+    </div>
+  </section>
+
+  <!-- Cách làm -->
+  <section class="section light">
+    <div class="container">
+      <div class="shead">
+        <div>
+          <p class="label">{p.stepsLabel}</p>
+          <h2 class="h2" data-split>{p.stepsTitle}</h2>
+        </div>
+      </div>
+      <div class="pillars">
+        {
+          p.steps.map((s, i) => (
+            <div class="pillar" data-reveal>
+              <span class="num muted">0{i + 1}</span>
+              <p class="pillar__k">{s.k}</p>
+              <h3 class="h3">{s.title}</h3>
+              <p>
+                <Fill text={s.text} lang={lang} />
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Gói Express -->
+  <section class="section" id="xp-offer" data-shape="sphere" data-place="right" data-opacity="0.5">
+    <div class="container xoffer">
+      <div class="xoffer__text">
+        <p class="label" data-reveal>{p.offerLabel}</p>
+        <h2 class="h2" data-split>{p.offerTitle}</h2>
+        {p.offerText.map((x) => <p class="lead" data-reveal>{x}</p>)}
+        <p class="xoffer__up" data-reveal>
+          {p.upgrade} <a href={path(lang, 'pricing')}>{p.upgradeLink} →</a>
+        </p>
+      </div>
+      <article class="plan plan--featured" data-reveal>
+        <h3 class="plan__name">{p.plan.name}</h3>
+        <p class="plan__for">{p.plan.for}</p>
+        <p class="plan__price">
+          <small>{p.plan.from}</small>
+          <span class:list={[express.price && 'num']}><Fill text="{price}" lang={lang} /></span>
+        </p>
+        <ul class="plan__list">
+          {
+            p.plan.features.map((f) => (
+              <li>
+                <span>
+                  <Fill text={f} lang={lang} />
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+        <Btn href={path(lang, 'contact')} class="plan__cta">{p.plan.cta}</Btn>
+      </article>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section--tight">
+    <div class="container faq-wrap">
+      <div>
+        <p class="label">FAQ</p>
+        <h2 class="h2" style="margin-top:24px" data-split>{p.faqTitle}</h2>
+      </div>
+      <div class="faq">
+        {
+          p.faq.map((f) => (
+            <details data-reveal>
+              <summary>
+                {f.q}
+                <span class="faq__plus" aria-hidden="true" />
+              </summary>
+              <div class="faq__a">
+                <p>
+                  <Fill text={f.a} lang={lang} />
+                </p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>

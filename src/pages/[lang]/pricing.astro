@@ -52,6 +52,9 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
         }
       </div>
       <p class="plans__note">{p.note}</p>
+      <p class="plans__express">
+        {p.expressHint} <a href={path(lang, 'express')}>{p.expressLink} →</a>
+      </p>
     </div>
   </section>
 
@@ -72,7 +75,7 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
               <li>
                 <span>{a.name}</span>
                 <span class="addons__price">
-                  <strong class="num">{a.price}</strong> <small>{a.unit}</small>
+                  <strong class:list={[/\d/.test(a.price) && 'num']}>{a.price}</strong> <small>{a.unit}</small>
                 </span>
               </li>
             ))

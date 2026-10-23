@@ -5,7 +5,7 @@ export const languages = { vi: 'Tiếng Việt', en: 'English' } as const;
 export type Lang = keyof typeof languages;
 export const defaultLang: Lang = 'vi';
 
-export type PageKey = 'home' | 'services' | 'pricing' | 'work' | 'about' | 'contact';
+export type PageKey = 'home' | 'services' | 'pricing' | 'work' | 'about' | 'contact' | 'express';
 
 export const routes: Record<PageKey, string> = {
   home: '',
@@ -14,9 +14,10 @@ export const routes: Record<PageKey, string> = {
   work: 'work/',
   about: 'about/',
   contact: 'contact/',
+  express: 'express/',
 };
 
-// Thứ tự trang cho hiệu ứng "cuộn tiếp để sang trang sau"
+// Thứ tự trang cho hiệu ứng "cuộn tiếp để sang trang sau" (Express đứng ngoài chuỗi này)
 export const pageOrder: PageKey[] = ['home', 'services', 'pricing', 'work', 'about', 'contact'];
 export function nextPage(page: PageKey): PageKey {
   return pageOrder[(pageOrder.indexOf(page) + 1) % pageOrder.length];
@@ -31,6 +32,7 @@ export const pageShape: Record<PageKey, string> = {
   work: 'knot',
   about: 'helix',
   contact: 'bubble',
+  express: 'sphere',
 };
 
 export function path(lang: Lang, page: PageKey) {
@@ -50,6 +52,22 @@ export const contact = {
   facebook: '#',
 };
 
+// Gói OneSpeedy Express cho tiệm nhỏ.
+// Ô nào để trống thì trang /express/ hiện nhãn vàng [..] đúng chỗ đó và tự gắn noindex (Google chưa lập chỉ mục).
+export const express = {
+  price: '$111', // giá khởi điểm trọn gói
+  days: '5', // số ngày làm việc từ khi nhận đủ ảnh & thông tin
+  pages: '5', // số trang của website
+  revisions: '5', // số lần chỉnh sửa trước khi lên mạng
+  // Câu trả lời "Giá đã gồm tên miền và hosting chưa?"
+  hosting: {
+    vi: 'Chưa. Tên miền và hosting trả riêng theo nhà cung cấp bạn chọn — chúng tôi tư vấn và cài đặt giúp bạn.',
+    en: 'No. Domain and hosting are paid separately to the provider you choose — we advise and set them up for you.',
+  },
+  // Các ngành đã có mẫu (khớp với ngành có demo trong site-kit)
+  industries: { vi: 'tiệm nail, nhà hàng & quán ăn', en: 'nail salons, restaurants & eateries' },
+};
+
 const vi = {
   meta: {
     siteName: 'OneSpeedy',
@@ -65,11 +83,11 @@ const vi = {
     },
     pricing: {
       title: 'Bảng giá thiết kế website — OneSpeedy',
-      description: 'Bảng giá minh bạch cho landing page, website doanh nghiệp, thương mại điện tử và website 3D cao cấp.',
+      description: 'Bảng giá thiết kế website theo quy mô và độ phức tạp — từ website gọn vài trang đến dự án nhiều tính năng, bán hàng online và 3D.',
     },
     work: {
       title: 'Dự án — OneSpeedy',
-      description: 'Các hướng thiết kế và dự án website của OneSpeedy.',
+      description: 'Mẫu giao diện website OneSpeedy theo từng ngành: tiệm nail, nhà hàng Việt, detailing & PPF, head spa.',
     },
     about: {
       title: 'Về chúng tôi — OneSpeedy',
@@ -79,6 +97,10 @@ const vi = {
       title: 'Liên hệ & nhận báo giá — OneSpeedy',
       description: 'Kể cho chúng tôi về dự án của bạn. OneSpeedy sẽ phản hồi với đề xuất và báo giá chi tiết.',
     },
+    express: {
+      title: 'OneSpeedy Express — Website trọn gói cho tiệm nhỏ',
+      description: 'Website đẹp, nhanh, chuẩn SEO cho tiệm nhỏ trên mẫu do OneSpeedy thiết kế. Chọn mẫu, gửi thông tin, lên mạng trong vài ngày.',
+    },
   },
   nav: {
     home: 'Trang chủ',
@@ -87,6 +109,7 @@ const vi = {
     work: 'Dự án',
     about: 'Về chúng tôi',
     contact: 'Liên hệ',
+    express: 'OneSpeedy Express',
     cta: 'Bắt đầu dự án',
     book: 'Đặt lịch gọi',
     bookLong: 'Đặt lịch gọi 15 phút',
@@ -143,10 +166,9 @@ const vi = {
     processLabel: 'Quy trình',
     processTitle: 'Từ ý tưởng đến ra mắt, rõ ràng từng bước.',
     workLabel: 'Dự án',
-    workTitle: 'Showcase đang được hoàn thiện.',
-    workText:
-      'OneSpeedy vừa ra mắt. Trong lúc những dự án đầu tiên được hoàn thiện, đây là các hướng thiết kế chúng tôi đang phát triển.',
-    workMore: 'Xem các concept',
+    workTitle: 'Mẫu giao diện, mỗi ngành một ý tưởng.',
+    workText: 'OneSpeedy vừa ra mắt nên chưa có dự án khách hàng để giới thiệu. Đây là các mẫu chúng tôi dựng cho từng ngành.',
+    workMore: 'Xem cả bốn mẫu',
     ctaTitleA: 'Có ý tưởng?',
     ctaTitleB: 'Hãy biến nó thành website đẳng cấp.',
     ctaText: 'Kể cho chúng tôi về dự án. Bạn sẽ nhận đề xuất hướng thiết kế và báo giá chi tiết.',
@@ -260,18 +282,73 @@ const vi = {
   },
   workPage: {
     label: 'Dự án',
-    titleA: 'Showcase',
-    titleB: 'đang được hoàn thiện.',
-    lead: 'OneSpeedy vừa ra mắt. Dưới đây là các hướng thiết kế chúng tôi đang phát triển cho từng ngành — dự án thực tế sẽ được cập nhật tại đây.',
-    badge: 'Concept',
-    soon: 'Sắp ra mắt',
-    concepts: [
-      { title: 'Khách sạn boutique', tag: 'Du lịch · Nghỉ dưỡng', hue: 'teal' },
-      { title: 'Thương hiệu mỹ phẩm', tag: 'Làm đẹp · Thương mại điện tử', hue: 'gold' },
-      { title: 'Công ty công nghệ', tag: 'SaaS · B2B', hue: 'slate' },
-      { title: 'Văn phòng kiến trúc', tag: 'Kiến trúc · Portfolio', hue: 'gold' },
-      { title: 'Nhà hàng fine dining', tag: 'Ẩm thực · Đặt bàn', hue: 'teal' },
-      { title: 'Bất động sản cao cấp', tag: 'Bất động sản · 3D', hue: 'slate' },
+    titleA: 'Mẫu giao diện,',
+    titleB: 'mỗi ngành một ý tưởng.',
+    lead: 'OneSpeedy vừa ra mắt nên chưa có dự án khách hàng để giới thiệu. Đây là bốn mẫu chúng tôi dựng theo từng ngành: mỗi mẫu lấy ý tưởng từ chính nghề đó, không dùng khung "chữ một bên, ảnh một bên".',
+    badge: 'Mẫu giao diện',
+    note: 'Tên tiệm, giá, giờ mở cửa và đánh giá trong mẫu đều là dữ liệu mẫu. Bản xem thử trực tiếp sắp có.',
+    cta: 'Muốn web kiểu này',
+    // Ảnh chụp từng mẫu nằm ở src/assets/mau, ghép theo `id` trong components/WorkCard.astro
+    templates: [
+      {
+        id: 'nail',
+        name: 'Mai Nail Atelier',
+        quote: 'Small studio, careful hands.',
+        industry: 'Tiệm nail · Mỹ',
+        planLine: 'Gói Express · Tiếng Anh',
+        hue: 'gold',
+        points: [
+          'Bìa là vòng mẫu móng xoè hình quạt: ảnh móng thật xen ô màu sơn',
+          'Bảng dịch vụ có thời lượng, độ bền, giá; lọc theo loại',
+          'Thẻ hẹn có mã QR; đổi được bảng màu và font cho từng tiệm',
+        ],
+      },
+      {
+        id: 'pho',
+        name: 'Phở Lan',
+        quote: 'Ngon từ nước dùng.',
+        industry: 'Nhà hàng Việt · Mỹ',
+        planLine: 'Gói Business · Anh + Việt',
+        hue: 'slate',
+        points: [
+          'Hero là sơ đồ giải phẫu một tô phở: trong nồi, trong tô',
+          'Thực đơn như bảng menu đánh số trên tường',
+          'Ưu đãi riêng theo nguồn quảng cáo; giờ trưa đưa bún, cơm lên trước',
+        ],
+      },
+      {
+        id: 'guong',
+        name: 'Gương Studio',
+        quote: 'Bề mặt sơn. Như gương.',
+        industry: 'Detailing, dán PPF · Việt Nam',
+        planLine: 'Gói Signature · Tiếng Việt',
+        hue: 'teal',
+        points: [
+          'Tấm thân xe 3D chia trước / sau, kéo hoặc cuộn để so',
+          'Máy tính báo giá: chọn cỡ xe và dịch vụ, ra giá tạm tính',
+          'Máy yếu tự hiện ảnh thay 3D; nút Zalo và Gọi luôn trong tầm tay',
+        ],
+      },
+      {
+        id: 'spa',
+        name: 'Sương Head Spa',
+        quote: 'Rest your head.',
+        industry: 'Head spa · Mỹ',
+        planLine: 'Gói Launch · Tiếng Anh',
+        hue: 'slate',
+        points: [
+          'Hero là cuộn phim một giờ gội đầu trên thước 00–60 phút',
+          'Bộ chọn buổi: chọn liệu trình, ra tổng số phút và giá',
+          'Chuyển động chỉ dùng CSS, gần như không có JavaScript',
+        ],
+      },
+    ],
+    commonTitle: 'Mẫu nào cũng có',
+    common: [
+      'Ưu tiên điện thoại: thanh Gọi, Chỉ đường, Đặt lịch dính đáy màn hình',
+      'SEO dựng sẵn: tiêu đề, mô tả, sitemap, dữ liệu cấu trúc đúng ngành',
+      'Dữ liệu tách khỏi giao diện: làm cho tiệm mới chỉ cần thay dữ liệu và ảnh',
+      'Chạy dạng file tĩnh, không cần máy chủ riêng',
     ],
   },
   aboutPage: {
@@ -312,7 +389,7 @@ const vi = {
       phone: 'Số điện thoại / Zalo',
       company: 'Công ty',
       services: 'Bạn quan tâm đến',
-      serviceOptions: ['Website doanh nghiệp', 'Landing page', 'Thương mại điện tử', 'Website 3D', 'SEO', 'Bảo trì'],
+      serviceOptions: ['Website doanh nghiệp', 'Landing page', 'Thương mại điện tử', 'Website 3D', 'OneSpeedy Express', 'SEO', 'Bảo trì'],
       budget: 'Ngân sách dự kiến',
       budgetOptions: ['Chưa xác định', 'Dưới 50 triệu', '50 – 150 triệu', 'Trên 150 triệu'],
       message: 'Mô tả ngắn về dự án',
@@ -331,49 +408,53 @@ const vi = {
     label: 'Bảng giá',
     titleA: 'Giá rõ ràng.',
     titleB: 'Không bất ngờ.',
-    lead: 'Mọi gói đều được thiết kế riêng, không dùng theme có sẵn. Giá dưới đây là mức khởi điểm — báo giá cố định được gửi sau buổi trao đổi 15 phút.',
+    lead: 'Gói chia theo quy mô và độ phức tạp, không theo loại website. Giá dưới đây là mức khởi điểm — báo giá cố định được gửi sau buổi trao đổi 15 phút.',
     from: 'Từ',
     note: 'Giá tham khảo bằng USD.',
+    expressHint: 'Tiệm nhỏ mới bắt đầu?',
+    expressLink: 'Xem OneSpeedy Express',
     recommended: 'Đề xuất',
     choose: 'Chọn gói này',
     plans: [
       {
         id: 'launch',
         name: 'Launch',
-        for: 'Landing page cho chiến dịch hoặc sản phẩm mới',
+        for: 'Website gọn cho một mục tiêu rõ ràng',
         price: '1,000',
         featured: false,
-        features: ['1 trang dài, thiết kế riêng', 'Hiệu ứng cuộn & chuyển động', 'Form + chat thu khách', 'SEO cơ bản & tối ưu tốc độ', 'Gắn mã đo lường quảng cáo'],
+        features: ['Đến 3 trang, thiết kế riêng', 'Hiệu ứng cuộn nhẹ nhàng', 'Form + chat thu khách', 'SEO cơ bản & tối ưu tốc độ', 'Gắn mã đo lường quảng cáo'],
       },
       {
         id: 'business',
         name: 'Business',
-        for: 'Website doanh nghiệp, hồ sơ năng lực số',
+        for: 'Website đầy đủ cho doanh nghiệp đang vận hành',
         price: '3,000',
         featured: true,
-        features: ['Đến 8 trang', 'Song ngữ Việt — Anh', 'Trang quản trị nội dung', 'SEO on-page & dữ liệu có cấu trúc', 'Chuyển trang mượt mà'],
+        features: ['Đến 8 trang', 'Song ngữ Việt — Anh', 'Trang quản trị nội dung', 'SEO on-page & dữ liệu có cấu trúc', 'Chuyển động & chuyển trang mượt mà'],
       },
       {
-        id: 'commerce',
-        name: 'Commerce',
-        for: 'Cửa hàng online, bán trong nước & quốc tế',
+        id: 'growth',
+        name: 'Growth',
+        for: 'Nhiều tính năng, kết nối hệ thống',
         price: '5,000',
         featured: false,
-        features: ['Danh mục, giỏ hàng, thanh toán', 'Quản lý đơn & kho', 'Song ngữ & đa tiền tệ', 'Tối ưu tốc độ trang sản phẩm', 'Hướng dẫn vận hành'],
+        features: ['Số trang theo cấu trúc dự án', 'Tính năng riêng: đặt lịch, tài khoản, tìm kiếm…', 'Kết nối thanh toán, CRM, email', 'Đa ngôn ngữ', 'Hướng dẫn vận hành'],
       },
       {
         id: 'signature',
         name: 'Signature',
-        for: 'Trải nghiệm 3D cho thương hiệu muốn khác biệt',
+        for: 'Dự án lớn, may đo toàn bộ',
         price: '8,000',
         featured: false,
-        features: ['Cảnh 3D WebGL / Three.js riêng', 'Chuyển động điện ảnh, chuyển trang', 'Thiết kế trải nghiệm thương hiệu', 'Tối ưu 3D cho điện thoại', 'Ưu tiên hỗ trợ'],
+        features: ['Phân tích & thiết kế trải nghiệm riêng', 'Tính năng & quy trình phức tạp', 'Hiệu ứng nâng cao theo yêu cầu', 'Kiểm thử kỹ trên mọi thiết bị', 'Ưu tiên hỗ trợ'],
       },
     ],
     includedTitle: 'Gói nào cũng có',
     included: ['Thiết kế riêng theo thương hiệu', 'Hiển thị đẹp trên mọi thiết bị', 'Bạn sở hữu toàn bộ mã nguồn', 'Đo tốc độ trước khi bàn giao', 'Hướng dẫn sử dụng & bàn giao'],
     addonsTitle: 'Tùy chọn thêm',
     addons: [
+      { name: 'Bán hàng online', price: 'Báo giá', unit: 'theo quy mô' },
+      { name: 'Cảnh 3D riêng', price: 'Báo giá', unit: 'theo độ phức tạp' },
       { name: 'Thêm ngôn ngữ', price: '+$400', unit: '/ ngôn ngữ' },
       { name: 'Trang bổ sung', price: '+$250', unit: '/ trang' },
       { name: 'Viết nội dung chuẩn SEO', price: '+$300', unit: '/ 5 trang' },
@@ -384,12 +465,14 @@ const vi = {
     compareFeature: 'Hạng mục',
     // 'yes' = có, 'no' = không, 'add' = tùy chọn thêm; chữ khác hiển thị nguyên văn
     compare: [
-      ['Số trang', '1', 'Đến 8', 'Theo danh mục', 'Theo dự án'],
+      ['Số trang', 'Đến 3', 'Đến 8', 'Theo dự án', 'Theo dự án'],
       ['Song ngữ', 'add', 'yes', 'yes', 'yes'],
       ['Trang quản trị nội dung', 'no', 'yes', 'yes', 'yes'],
-      ['Thanh toán online', 'no', 'no', 'yes', 'add'],
+      ['Tính năng riêng (đặt lịch, tài khoản…)', 'no', 'add', 'yes', 'yes'],
+      ['Kết nối hệ thống (thanh toán, CRM…)', 'no', 'add', 'yes', 'yes'],
+      ['Bán hàng online', 'add', 'add', 'add', 'add'],
+      ['Cảnh 3D riêng', 'add', 'add', 'add', 'add'],
       ['Chuyển trang mượt mà', 'no', 'yes', 'yes', 'yes'],
-      ['Cảnh 3D WebGL riêng', 'no', 'no', 'no', 'yes'],
       ['SEO', 'Cơ bản', 'On-page', 'On-page', 'On-page + quốc tế'],
     ],
     compareLegend: { yes: 'Có', no: 'Không', add: 'Tùy chọn thêm' },
@@ -398,6 +481,10 @@ const vi = {
       {
         q: 'Vì sao giá ghi "từ"?',
         a: 'Mỗi website được làm riêng nên chi phí phụ thuộc số trang, tính năng và hiệu ứng. Sau buổi trao đổi, bạn nhận báo giá cố định, ghi rõ từng hạng mục.',
+      },
+      {
+        q: 'Làm website bán hàng hoặc có 3D thì chọn gói nào?',
+        a: 'Gói nào cũng được — tùy độ phức tạp. Một cửa hàng vài chục sản phẩm khác hẳn hệ thống nhiều kho, đa tiền tệ; một chút 3D điểm xuyết khác hẳn một cảnh 3D dựng riêng. Chúng tôi báo giá phần này sau khi nắm rõ yêu cầu.',
       },
       {
         q: 'Giá đã gồm tên miền và hosting chưa?',
@@ -410,6 +497,72 @@ const vi = {
       {
         q: 'Tôi chưa biết nên chọn gói nào?',
         a: 'Đặt lịch gọi 15 phút. Chúng tôi sẽ nghe mục tiêu của bạn và đề xuất gói phù hợp — kể cả khi đó là gói nhỏ nhất.',
+      },
+      {
+        q: 'Tôi chỉ có một tiệm nhỏ, ngân sách vừa phải?',
+        a: 'Hãy xem OneSpeedy Express: website trọn gói trên mẫu do chúng tôi thiết kế, dành riêng cho tiệm nhỏ mới bắt đầu.',
+      },
+    ],
+  },
+  expressPage: {
+    label: 'OneSpeedy Express',
+    titleA: 'Tiệm của bạn,',
+    titleB: 'có mặt trên mạng.',
+    lead: 'Chọn một mẫu do đội OneSpeedy thiết kế, gửi ảnh và thông tin tiệm. Chúng tôi dựng, tối ưu và đưa lên mạng — bạn chỉ việc đón khách.',
+    // {price}, {days}… lấy từ `express` ở đầu file
+    facts: [
+      { k: 'Giá trọn gói', v: 'Từ {price}' },
+      { k: 'Thời gian', v: '{days} ngày làm việc' },
+      { k: 'Website', v: '{pages} trang' },
+    ],
+    cta: 'Nhận tư vấn',
+    ctaAlt: 'Gói gồm những gì',
+    forLabel: 'Dành cho',
+    forTitle: 'Tiệm nhỏ muốn khách tìm thấy mình.',
+    forText: 'Tiệm nail, nhà hàng, quán ăn, spa, salon tóc — những cửa hàng cần một website gọn và đẹp, để khách tìm thấy trên Google và liên hệ ngay từ điện thoại.',
+    industries: 'Mẫu đang có cho: {industries}',
+    sampleLabel: 'Mẫu Express',
+    sampleTitle: 'Một mẫu Express đang có.',
+    sampleMore: 'Xem tất cả mẫu',
+    stepsLabel: 'Cách làm',
+    stepsTitle: 'Ba bước, không cần họp dài.',
+    steps: [
+      { k: 'Chọn', title: 'Chọn mẫu', text: 'Chọn một mẫu hợp với tiệm trong bộ mẫu OneSpeedy thiết kế cho từng ngành.' },
+      { k: 'Gửi', title: 'Gửi thông tin', text: 'Gửi tên tiệm, ảnh, bảng giá dịch vụ, giờ mở cửa và địa chỉ.' },
+      { k: 'Lên mạng', title: 'Đón khách', text: 'Chúng tôi dựng, kiểm tra tốc độ và đưa website lên mạng trong {days} ngày làm việc.' },
+    ],
+    offerLabel: 'Gói Express',
+    offerTitle: 'Giá gọn vì phạm vi cố định, không phải vì làm vội.',
+    offerText: [
+      'Express dùng mẫu OneSpeedy đã thiết kế sẵn và một phạm vi cố định, nên không có các vòng thiết kế riêng — phần làm nên chi phí của một website may đo.',
+      'Chuẩn kỹ thuật thì giữ nguyên như mọi website OneSpeedy: tải nhanh, chuẩn SEO, đẹp trên điện thoại.',
+    ],
+    upgrade: 'Khi tiệm lớn lên và cần thiết kế riêng, bạn có thể nâng lên gói Launch hoặc Business.',
+    upgradeLink: 'Xem bảng giá',
+    plan: {
+      name: 'Express',
+      for: 'Website trọn gói cho tiệm nhỏ',
+      from: 'Từ',
+      features: [
+        '{pages} trang trên mẫu do OneSpeedy thiết kế',
+        'Đẹp và nhanh trên điện thoại',
+        'Nút gọi, nhắn tin và chỉ đường',
+        'SEO cơ bản để khách tìm thấy trên Google',
+        'Chỉnh sửa {revisions} lần trước khi lên mạng',
+      ],
+      cta: 'Bắt đầu với Express',
+    },
+    faqTitle: 'Câu hỏi về Express',
+    faq: [
+      { q: 'Bao lâu thì website lên mạng?', a: 'Khoảng {days} ngày làm việc, tính từ khi chúng tôi nhận đủ ảnh và thông tin tiệm.' },
+      { q: 'Giá đã gồm tên miền và hosting chưa?', a: '{hosting}' },
+      {
+        q: 'Tôi có được đổi màu, đổi chữ trên mẫu không?',
+        a: 'Có. Màu, logo, ảnh và nội dung được thay theo tiệm của bạn. Bố cục giữ theo mẫu — nếu cần bố cục riêng, gói Launch sẽ hợp hơn.',
+      },
+      {
+        q: 'Sau này muốn làm website riêng thì sao?',
+        a: 'Bạn có thể nâng lên gói Launch hoặc Business bất cứ lúc nào. Chúng tôi sẽ tư vấn phần nào giữ lại được.',
       },
     ],
   },
@@ -480,11 +633,11 @@ const en: typeof vi = {
     },
     pricing: {
       title: 'Website design pricing — OneSpeedy',
-      description: 'Transparent pricing for landing pages, corporate websites, e-commerce and premium 3D websites.',
+      description: 'Website pricing by project size and complexity — from focused sites to feature-rich builds, online stores and 3D.',
     },
     work: {
       title: 'Work — OneSpeedy',
-      description: 'Design directions and website projects by OneSpeedy.',
+      description: 'OneSpeedy website templates by industry: nail salon, Vietnamese restaurant, detailing & PPF, head spa.',
     },
     about: {
       title: 'About — OneSpeedy',
@@ -494,6 +647,10 @@ const en: typeof vi = {
       title: 'Contact & get a quote — OneSpeedy',
       description: 'Tell us about your project. OneSpeedy will reply with a proposal and a detailed quote.',
     },
+    express: {
+      title: 'OneSpeedy Express — All-in websites for small shops',
+      description: 'A fast, SEO-ready website for small shops on a OneSpeedy-designed template. Pick a template, send your details, go live in days.',
+    },
   },
   nav: {
     home: 'Home',
@@ -502,6 +659,7 @@ const en: typeof vi = {
     work: 'Work',
     about: 'About',
     contact: 'Contact',
+    express: 'OneSpeedy Express',
     cta: 'Start a project',
     book: 'Book a call',
     bookLong: 'Book a 15-min call',
@@ -558,10 +716,9 @@ const en: typeof vi = {
     processLabel: 'Process',
     processTitle: 'From idea to launch, clear at every step.',
     workLabel: 'Work',
-    workTitle: 'Our showcase is in the making.',
-    workText:
-      "OneSpeedy has just launched. While our first projects are being finished, here are the design directions we're developing.",
-    workMore: 'See the concepts',
+    workTitle: 'Templates, one idea per industry.',
+    workText: 'OneSpeedy has just launched, so there are no client projects to show yet. Here are templates we built for specific industries.',
+    workMore: 'See all four',
     ctaTitleA: 'Have an idea?',
     ctaTitleB: "Let's make it a world-class website.",
     ctaText: "Tell us about your project. You'll get a design direction proposal and a detailed quote.",
@@ -675,18 +832,72 @@ const en: typeof vi = {
   },
   workPage: {
     label: 'Work',
-    titleA: 'Our showcase',
-    titleB: 'is in the making.',
-    lead: "OneSpeedy has just launched. Below are the design directions we're developing for different industries — real projects will be published here.",
-    badge: 'Concept',
-    soon: 'Coming soon',
-    concepts: [
-      { title: 'Boutique hotel', tag: 'Travel · Hospitality', hue: 'teal' },
-      { title: 'Beauty brand', tag: 'Beauty · E-commerce', hue: 'gold' },
-      { title: 'Technology company', tag: 'SaaS · B2B', hue: 'slate' },
-      { title: 'Architecture studio', tag: 'Architecture · Portfolio', hue: 'gold' },
-      { title: 'Fine dining restaurant', tag: 'Food · Reservations', hue: 'teal' },
-      { title: 'Luxury real estate', tag: 'Real estate · 3D', hue: 'slate' },
+    titleA: 'Templates,',
+    titleB: 'one idea per industry.',
+    lead: 'OneSpeedy has just launched, so there are no client projects to show yet. These are four templates we built for specific industries: each takes its idea from the trade itself instead of the usual text-beside-image layout.',
+    badge: 'Template',
+    note: 'Shop names, prices, opening hours and reviews in these templates are sample data. Live previews are coming soon.',
+    cta: 'I want one like this',
+    templates: [
+      {
+        id: 'nail',
+        name: 'Mai Nail Atelier',
+        quote: 'Small studio, careful hands.',
+        industry: 'Nail salon · US',
+        planLine: 'Express plan · English',
+        hue: 'gold',
+        points: [
+          'The cover is a fan of nail tips: real sets mixed with polish swatches',
+          'Service menu with duration, wear time and price, filtered by type',
+          'Appointment card with a QR code; colors and fonts switch per salon',
+        ],
+      },
+      {
+        id: 'pho',
+        name: 'Phở Lan',
+        quote: 'Broth first.',
+        industry: 'Vietnamese restaurant · US',
+        planLine: 'Business plan · English + Vietnamese',
+        hue: 'slate',
+        points: [
+          'The hero is an anatomy of a bowl of phở: in the pot, in the bowl',
+          'The menu reads like a numbered board on the wall',
+          'Offers matched to the ad source; at lunch, bún and rice dishes move up',
+        ],
+      },
+      {
+        id: 'guong',
+        name: 'Gương Studio',
+        quote: 'Bề mặt sơn. Như gương.',
+        industry: 'Detailing & PPF · Vietnam',
+        planLine: 'Signature plan · Vietnamese',
+        hue: 'teal',
+        points: [
+          'A 3D car panel split before / after: drag or scroll to compare',
+          'A quote calculator: pick car size and service for an estimate',
+          'Weak devices get a poster instead of 3D; Zalo and Call stay within reach',
+        ],
+      },
+      {
+        id: 'spa',
+        name: 'Sương Head Spa',
+        quote: 'Rest your head.',
+        industry: 'Head spa · US',
+        planLine: 'Launch plan · English',
+        hue: 'slate',
+        points: [
+          'The hero is a film strip of the one-hour wash on a 00–60 minute ruler',
+          'A session builder: pick treatments, see total minutes and price',
+          'Motion uses CSS only, with almost no JavaScript',
+        ],
+      },
+    ],
+    commonTitle: 'Every template includes',
+    common: [
+      'Phone first: a sticky Call, Directions, Book bar',
+      'SEO built in: titles, descriptions, sitemap, industry-specific structured data',
+      'Data kept apart from design: a new shop only needs new data and photos',
+      'Runs as static files, no dedicated server',
     ],
   },
   aboutPage: {
@@ -727,7 +938,7 @@ const en: typeof vi = {
       phone: 'Phone / WhatsApp',
       company: 'Company',
       services: "You're interested in",
-      serviceOptions: ['Corporate website', 'Landing page', 'E-commerce', '3D website', 'SEO', 'Maintenance'],
+      serviceOptions: ['Corporate website', 'Landing page', 'E-commerce', '3D website', 'OneSpeedy Express', 'SEO', 'Maintenance'],
       budget: 'Estimated budget',
       budgetOptions: ['Not sure yet', 'Under $2k', '$2k – $6k', 'Over $6k'],
       message: 'Briefly describe your project',
@@ -746,49 +957,53 @@ const en: typeof vi = {
     label: 'Pricing',
     titleA: 'Clear pricing.',
     titleB: 'No surprises.',
-    lead: 'Every plan is custom-designed — no off-the-shelf themes. Prices below are starting points; a fixed quote follows a 15-minute call.',
+    lead: 'Plans scale with size and complexity, not website type. Prices below are starting points; a fixed quote follows a 15-minute call.',
     from: 'From',
     note: 'Indicative prices in USD.',
+    expressHint: 'A small shop just starting out?',
+    expressLink: 'See OneSpeedy Express',
     recommended: 'Recommended',
     choose: 'Choose this plan',
     plans: [
       {
         id: 'launch',
         name: 'Launch',
-        for: 'A landing page for a campaign or new product',
+        for: 'A focused website with one clear goal',
         price: '1,000',
         featured: false,
-        features: ['One long custom page', 'Scroll & motion effects', 'Lead form + live chat', 'Basic SEO & speed tuning', 'Ad tracking setup'],
+        features: ['Up to 3 custom pages', 'Subtle scroll effects', 'Lead form + live chat', 'Basic SEO & speed tuning', 'Ad tracking setup'],
       },
       {
         id: 'business',
         name: 'Business',
-        for: 'A corporate website and digital profile',
+        for: 'A complete website for an established business',
         price: '3,000',
         featured: true,
-        features: ['Up to 8 pages', 'Bilingual by default', 'Content management', 'On-page SEO & structured data', 'Smooth page transitions'],
+        features: ['Up to 8 pages', 'Bilingual by default', 'Content management', 'On-page SEO & structured data', 'Smooth motion & page transitions'],
       },
       {
-        id: 'commerce',
-        name: 'Commerce',
-        for: 'An online store selling locally and globally',
+        id: 'growth',
+        name: 'Growth',
+        for: 'More features, connected systems',
         price: '5,000',
         featured: false,
-        features: ['Catalog, cart, checkout', 'Orders & inventory', 'Multilingual & multi-currency', 'Fast product pages', 'Operations walkthrough'],
+        features: ['Pages scoped to your project', 'Custom features: booking, accounts, search…', 'Payments, CRM & email integrations', 'Multilingual', 'Operations walkthrough'],
       },
       {
         id: 'signature',
         name: 'Signature',
-        for: 'A 3D experience for brands that want to stand out',
+        for: 'Large, fully tailored projects',
         price: '8,000',
         featured: false,
-        features: ['Custom WebGL / Three.js scene', 'Cinematic motion & transitions', 'Brand experience design', 'Mobile-optimized 3D', 'Priority support'],
+        features: ['Custom experience research & design', 'Complex features & workflows', 'Advanced effects on request', 'Thorough testing on every device', 'Priority support'],
       },
     ],
     includedTitle: 'Every plan includes',
     included: ['Custom design for your brand', 'Looks great on every device', 'You own all the code', 'Speed tested before handover', 'Training & handover'],
     addonsTitle: 'Add-ons',
     addons: [
+      { name: 'Online store', price: 'Quote', unit: 'by scale' },
+      { name: 'Custom 3D scene', price: 'Quote', unit: 'by complexity' },
       { name: 'Extra language', price: '+$400', unit: '/ language' },
       { name: 'Extra page', price: '+$250', unit: '/ page' },
       { name: 'SEO copywriting', price: '+$300', unit: '/ 5 pages' },
@@ -798,12 +1013,14 @@ const en: typeof vi = {
     compareTitle: 'Compare plans',
     compareFeature: 'Feature',
     compare: [
-      ['Pages', '1', 'Up to 8', 'Catalog-based', 'Per project'],
+      ['Pages', 'Up to 3', 'Up to 8', 'Per project', 'Per project'],
       ['Bilingual', 'add', 'yes', 'yes', 'yes'],
       ['Content management', 'no', 'yes', 'yes', 'yes'],
-      ['Online payments', 'no', 'no', 'yes', 'add'],
+      ['Custom features (booking, accounts…)', 'no', 'add', 'yes', 'yes'],
+      ['Integrations (payments, CRM…)', 'no', 'add', 'yes', 'yes'],
+      ['Online store', 'add', 'add', 'add', 'add'],
+      ['Custom 3D scene', 'add', 'add', 'add', 'add'],
       ['Smooth page transitions', 'no', 'yes', 'yes', 'yes'],
-      ['Custom WebGL 3D scene', 'no', 'no', 'no', 'yes'],
       ['SEO', 'Basic', 'On-page', 'On-page', 'On-page + international'],
     ],
     compareLegend: { yes: 'Included', no: 'Not included', add: 'Add-on' },
@@ -812,6 +1029,10 @@ const en: typeof vi = {
       {
         q: 'Why do prices say "from"?',
         a: 'Every website is custom, so cost depends on pages, features and effects. After our call you get a fixed quote with every item itemized.',
+      },
+      {
+        q: 'Which plan do I need for an online store or 3D?',
+        a: 'Any plan — it depends on complexity. A store with a few dozen products is very different from a multi-warehouse, multi-currency system, and a light 3D touch is very different from a fully custom 3D scene. We quote this part once we understand what you need.',
       },
       {
         q: 'Are domain and hosting included?',
@@ -824,6 +1045,71 @@ const en: typeof vi = {
       {
         q: "I'm not sure which plan fits.",
         a: "Book a 15-minute call. We'll listen to your goals and recommend the right plan — even if it's the smallest one.",
+      },
+      {
+        q: 'I run a small shop on a modest budget.',
+        a: 'Take a look at OneSpeedy Express: an all-in website on a template we design, made for small shops just starting out.',
+      },
+    ],
+  },
+  expressPage: {
+    label: 'OneSpeedy Express',
+    titleA: 'Your shop,',
+    titleB: 'on the map.',
+    lead: 'Pick a template designed by the OneSpeedy team, then send us your photos and shop details. We build, optimize and launch it — you just welcome the customers.',
+    facts: [
+      { k: 'All-in price', v: 'From {price}' },
+      { k: 'Turnaround', v: '{days} business days' },
+      { k: 'Website', v: '{pages} pages' },
+    ],
+    cta: 'Get in touch',
+    ctaAlt: "What's included",
+    forLabel: 'Made for',
+    forTitle: 'Small shops that want to be found.',
+    forText: 'Nail salons, restaurants, eateries, spas, hair salons — shops that need a clean, good-looking website so customers find them on Google and reach out right from their phone.',
+    industries: 'Templates available for: {industries}',
+    sampleLabel: 'Express template',
+    sampleTitle: 'An Express template, ready now.',
+    sampleMore: 'See all templates',
+    stepsLabel: 'How it works',
+    stepsTitle: 'Three steps, no long meetings.',
+    steps: [
+      { k: 'Pick', title: 'Choose a template', text: 'Pick the one that fits your shop from the templates OneSpeedy designs for each industry.' },
+      { k: 'Send', title: 'Send your details', text: 'Send your shop name, photos, price list, opening hours and address.' },
+      { k: 'Launch', title: 'Welcome customers', text: 'We build it, test its speed and put it online within {days} business days.' },
+    ],
+    offerLabel: 'The Express plan',
+    offerTitle: 'Priced lean because the scope is fixed — not because it is rushed.',
+    offerText: [
+      'Express uses templates OneSpeedy has already designed and a fixed scope, so there are no custom design rounds — the part that drives the cost of a tailor-made website.',
+      'The technical standard stays the same as every OneSpeedy site: fast, SEO-ready and polished on phones.',
+    ],
+    upgrade: 'When your shop grows and needs a custom design, you can move up to Launch or Business.',
+    upgradeLink: 'See pricing',
+    plan: {
+      name: 'Express',
+      for: 'An all-in website for small shops',
+      from: 'From',
+      features: [
+        '{pages} pages on a OneSpeedy-designed template',
+        'Fast and polished on phones',
+        'Call, message and directions buttons',
+        'Basic SEO so Google can find you',
+        '{revisions} rounds of edits before launch',
+      ],
+      cta: 'Start with Express',
+    },
+    faqTitle: 'Express questions',
+    faq: [
+      { q: 'How long until my website is live?', a: 'About {days} business days from when we have all your photos and shop details.' },
+      { q: 'Are domain and hosting included?', a: '{hosting}' },
+      {
+        q: 'Can I change the colors and text on a template?',
+        a: 'Yes. Colors, logo, photos and content are swapped for your shop. The layout follows the template — if you need a custom layout, the Launch plan is a better fit.',
+      },
+      {
+        q: 'What if I want a custom website later?',
+        a: 'You can move up to Launch or Business at any time. We will advise you on what can be carried over.',
       },
     ],
   },

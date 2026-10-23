@@ -42,7 +42,7 @@ Gắn `data-shape` lên bất kỳ section nào để hạt biến thành hình 
 
 | Đường dẫn | Nội dung |
 | --- | --- |
-| `src/pages/[lang]/` | Các trang: trang chủ, dịch vụ, bảng giá, dự án, về chúng tôi, liên hệ |
+| `src/pages/[lang]/` | Các trang: trang chủ, dịch vụ, bảng giá, dự án, về chúng tôi, liên hệ, express (gói tiệm nhỏ — số liệu điền ở `express` trong `src/i18n/ui.ts`) |
 | `src/layouts/Base.astro` | Khung chung: SEO, hreflang, font, header, footer, chat |
 | `src/scripts/scene.ts` | Cảnh 3D: hạt sáng tạo thành chữ O của logo (tải trễ) |
 | `src/scripts/app.ts` | Cuộn mượt, hiệu ứng chữ, chuyển trang, con trỏ, form, chat |

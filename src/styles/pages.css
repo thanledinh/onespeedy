@@ -141,6 +141,24 @@
   font-size: 13px;
   color: var(--fg-dim);
 }
+/* Lối vào kín đáo sang gói Express (tiệm nhỏ) */
+.plans__express {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+.plans__express a,
+.xoffer__up a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line-strong);
+  transition: text-decoration-color 0.3s;
+}
+.plans__express a:hover,
+.xoffer__up a:hover {
+  text-decoration-color: var(--teal);
+}
 
 .incl {
   display: grid;
@@ -260,6 +278,85 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ============================================================
+   Express (gói tiệm nhỏ)
+   ============================================================ */
+.xfacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 40px 0 0;
+}
+.xfacts > div {
+  min-width: 160px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(15, 31, 42, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.xfacts dt {
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+.xfacts dd {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+.xhero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 40px;
+}
+.xfor .h2 {
+  margin-top: 24px;
+  max-width: 18ch;
+}
+.xfor .lead {
+  margin-top: 28px;
+  max-width: 58ch;
+}
+.xfor__ind {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--fg-dim);
+}
+.xoffer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .xoffer {
+    grid-template-columns: 1fr;
+  }
+}
+.xoffer__text .h2 {
+  margin: 24px 0 28px;
+}
+.xoffer__text .lead + .lead {
+  margin-top: 16px;
+}
+.xoffer__up {
+  margin-top: 32px;
+  color: var(--fg-muted);
+}
+/* Ô số liệu chưa điền — màu vàng dạ quang ngoài brand kit để nhìn là biết chỗ cần điền */
+mark.todo {
+  padding: 0 0.35em;
+  border-radius: 4px;
+  background: #ffe066;
+  color: #0b1720;
+  font-family: var(--font-vi, inherit);
+  font-size: 0.85em;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 /* ============================================================

@@ -1,4 +1,5 @@
 ---
+import StepArt from './StepArt.astro';
 import { useT, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -22,6 +23,7 @@ const t = useT(lang);
       t.process.map((s, i) => (
         <li class="step" data-reveal>
           <span class="step__num">0{i + 1}</span>
+          <StepArt i={i} />
           <h3 class="h3">{s.title}</h3>
           <p>{s.text}</p>
         </li>

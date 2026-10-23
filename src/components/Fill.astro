@@ -1,0 +1,28 @@
+---
+// Chèn số liệu gói Express vào câu chữ: "{days}" → express.days (xem i18n/ui.ts).
+// Ô chưa điền hiện thành nhãn vàng [..] để dễ thấy chỗ cần điền.
+import { express, type Lang } from '../i18n/ui';
+
+interface Props {
+  text: string;
+  lang: Lang;
+}
+const { text, lang } = Astro.props;
+const labels: Record<string, string> = {
+  price: 'giá',
+  days: 'số ngày',
+  pages: 'số trang',
+  revisions: 'số lần sửa',
+  hosting: 'trả lời: tên miền & hosting',
+  industries: 'các ngành có mẫu',
+};
+const parts = text.split(/(\{\w+\})/).map((s) => {
+  const key = s.match(/^\{(\w+)\}$/)?.[1];
+  if (!key) return { s };
+  const v = express[key as keyof typeof express];
+  const filled = typeof v === 'string' ? v : v?.[lang];
+  return filled ? { s: filled } : { todo: labels[key] ?? key };
+});
+---
+
+{parts.map((p) => ('todo' in p ? <mark class="todo">[{p.todo}]</mark> : p.s))}

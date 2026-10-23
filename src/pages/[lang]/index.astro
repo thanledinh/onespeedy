@@ -126,8 +126,14 @@ const cursorView = lang === 'vi' ? 'Xem' : 'View';
       </div>
       <div class="works works--home">
         {
-          t.workPage.concepts.slice(0, 2).map((c) => (
-            <WorkCard {...c} badge={`${t.workPage.badge} · ${t.workPage.soon}`} href={path(lang, 'work')} cursor={cursorView} />
+          ['pho', 'nail'].map((id) => (
+            <WorkCard
+              tpl={t.workPage.templates.find((x) => x.id === id)!}
+              lang={lang}
+              badge={t.workPage.badge}
+              href={`${path(lang, 'work')}#mau-${id}`}
+              cursor={cursorView}
+            />
           ))
         }
       </div>

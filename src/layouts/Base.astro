@@ -14,7 +14,7 @@ import Curtain from '../components/Curtain.astro';
 import ChatWidget from '../components/ChatWidget.astro';
 import Logo from '../components/Logo.astro';
 import NextPage from '../components/NextPage.astro';
-import { useT, path, contact, type Lang, type PageKey } from '../i18n/ui';
+import { useT, path, contact, pageOrder, type Lang, type PageKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -108,7 +108,7 @@ const jsonLd = {
     </main>
 
     <Footer lang={lang} />
-    {page && <NextPage lang={lang} page={page} />}
+    {page && pageOrder.includes(page) && <NextPage lang={lang} page={page} />}
 
     <ChatWidget lang={lang} />
     <Curtain />
