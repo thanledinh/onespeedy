@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Btn from './Btn.astro';
-import { useT, path, contact, hasPage, type Lang, type PageKey } from '../i18n/ui';
+import { useT, path, contact, hasPage, seoOps, type Lang, type PageKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -36,6 +36,7 @@ const year = new Date().getFullYear();
         <h3>{t.footer.nav}</h3>
         <ul>
           {links.map((k) => <li><a href={path(lang, k)}>{t.nav[k]}</a></li>)}
+          <li><a href={seoOps[lang]}>{t.nav.seoOps}</a></li>
         </ul>
       </div>
       <div>

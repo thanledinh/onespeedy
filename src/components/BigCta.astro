@@ -18,7 +18,7 @@ const t = useT(lang);
     <p class="lead" data-reveal>{t.home.ctaText}</p>
     <div class="hero__actions" data-reveal>
       <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
-      <Btn href={contact.booking || path(lang, 'contact')} variant="ghost" icon={false}>{t.nav.bookLong}</Btn>
+      <Btn href={contact.booking || `mailto:${contact.email}`} variant="ghost" icon={false}>{contact.booking ? t.nav.bookLong : t.nav.emailUs}</Btn>
     </div>
   </div>
 </section>

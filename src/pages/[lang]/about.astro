@@ -1,9 +1,10 @@
 ---
+// Về chúng tôi, giao diện sáng.
 import Base from '../../layouts/Base.astro';
 import Logo from '../../components/Logo.astro';
 import Btn from '../../components/Btn.astro';
-import BigCta from '../../components/BigCta.astro';
-import { useT, contact, path, type Lang } from '../../i18n/ui';
+import ServiceIcon from '../../components/ServiceIcon.astro';
+import { useT, contact, path, seoOps, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -12,27 +13,51 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const t = useT(lang);
 const p = t.aboutPage;
+const h = t.home;
 const teamHref = contact.email ? `mailto:${contact.email}` : path(lang, 'contact');
+const offerHref = (to: string) => (to === 'seo' ? seoOps[lang] : path(lang, to as 'services' | 'contact'));
 ---
 
-<Base lang={lang} page="about">
-  <section class="phero" data-shape="helix" data-place="corner">
+<Base lang={lang} page="about" look="light">
+  <section class="lh-phero">
     <div class="container">
-      <p class="label" data-reveal>{p.label}</p>
-      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
-      <p class="lead" data-reveal>{p.lead}</p>
+      <p class="lh-tag" data-reveal>{p.label}</p>
+      <h1 class="lh-h1" data-reveal>{p.titleA} <mark class="lh-mark">{p.titleB}</mark></h1>
+      <p class="lh-lead" data-reveal>{p.lead}</p>
     </div>
   </section>
 
-  <section class="section--tight">
-    <div class="container story">
-      <div class="story__mark" data-reveal>
-        <Logo kind="monogram" />
+  <!-- CHÚNG TÔI LÀM GÌ -->
+  <section class="lh-section lh-section--top0">
+    <div class="container">
+      <h2 class="lh-h2 lh-what__title" data-reveal><mark class="lh-mark">{p.whatLabel}</mark></h2>
+      <div class="lh-what">
+        {
+          h.offers.map((s) => (
+            <a class="lh-mini" href={offerHref(s.to)} data-reveal>
+              <span class="lh-mini__icon" aria-hidden="true">
+                <ServiceIcon i={s.icon} />
+              </span>
+              <h3 class="lh-mini__title">{s.title}</h3>
+              <p>{s.text}</p>
+              <span class="lh-mini__more">{s.more} →</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CÂU CHUYỆN LOGO -->
+  <section class="lh-section lh-section--top0">
+    <div class="container lh-story">
+      <div class="lh-story__mark" data-reveal>
+        <Logo kind="monogram" tone="color" />
       </div>
       <div>
-        <p class="label">{p.storyLabel}</p>
-        <h2 class="h2" style="margin:24px 0 40px" data-split>{p.storyTitle}</h2>
-        <ul class="story__list">
+        <p class="lh-tag" data-reveal>{p.storyLabel}</p>
+        <h2 class="lh-h2 lh-split__title" data-reveal>{p.storyTitle}</h2>
+        <ul class="lh-story__list">
           {
             p.story.map((s) => (
               <li data-reveal>
@@ -46,20 +71,21 @@ const teamHref = contact.email ? `mailto:${contact.email}` : path(lang, 'contact
     </div>
   </section>
 
-  <section class="section" data-shape="helix" data-place="center" data-opacity="0.6">
+  <!-- GIÁ TRỊ -->
+  <section class="lh-section lh-section--top0">
     <div class="container">
-      <div class="shead">
+      <div class="lh-head">
         <div>
-          <p class="label">{p.valuesLabel}</p>
-          <h2 class="h2" data-split>{p.valuesTitle}</h2>
+          <p class="lh-tag" data-reveal>{p.valuesLabel}</p>
+          <h2 class="lh-h2 lh-head__title" data-reveal>{p.valuesTitle}</h2>
         </div>
       </div>
-      <div class="values">
+      <div class="lh-values">
         {
           p.values.map((v, i) => (
-            <div class="value" data-reveal>
-              <span class="num">0{i + 1}</span>
-              <h3 class="h3">{v.title}</h3>
+            <div class="lh-value" data-reveal>
+              <span class="lh-value__num">0{i + 1}</span>
+              <h3 class="lh-mini__title">{v.title}</h3>
               <p>{v.text}</p>
             </div>
           ))
@@ -68,17 +94,35 @@ const teamHref = contact.email ? `mailto:${contact.email}` : path(lang, 'contact
     </div>
   </section>
 
-  <section class="section--tight">
+  <!-- ĐỘI NGŨ -->
+  <section class="lh-section lh-section--flush">
     <div class="container">
-      <div class="team" data-reveal>
+      <div class="lh-team lh-dark" data-reveal>
         <div>
-          <p class="label">{p.teamTitle}</p>
-          <p class="h3" style="margin-top:16px;max-width:30ch">{p.teamText}</p>
+          <p class="lh-tag lh-tag--dark">{p.teamTitle}</p>
+          <p class="lh-team__text">{p.teamText}</p>
         </div>
-        <Btn href={teamHref} variant="ghost">{p.teamCta}</Btn>
+        <Btn href={teamHref}>{p.teamCta}</Btn>
       </div>
     </div>
   </section>
 
-  <BigCta lang={lang} />
+  <!-- LỜI MỜI CUỐI -->
+  <section class="lh-section">
+    <div class="container">
+      <div class="lh-cta" data-reveal>
+        <div>
+          <h2 class="lh-h2">
+            {h.ctaTitleA} <mark class="lh-mark">{h.ctaTitleB}</mark>
+          </h2>
+          <p>{h.ctaText}</p>
+          <div class="lh-actions">
+            <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
+            <Btn href={contact.booking || `mailto:${contact.email}`} variant="ghost" icon={false}>{contact.booking ? t.nav.bookLong : t.nav.emailUs}</Btn>
+          </div>
+        </div>
+        <Logo kind="monogram" tone="color" class="lh-cta__mark" />
+      </div>
+    </div>
+  </section>
 </Base>

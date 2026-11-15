@@ -279,10 +279,16 @@ function initPage(firstLoad: boolean) {
       if (inHero.length) {
         gsap.to(inHero, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: heroDelay + 0.35 });
       }
-      ScrollTrigger.batch(gsap.utils.toArray<HTMLElement>('[data-reveal]').filter((el) => !inHero.includes(el)), {
+      const rest = gsap.utils.toArray<HTMLElement>('[data-reveal]').filter((el) => !inHero.includes(el));
+      ScrollTrigger.batch(rest, {
         start: 'top 88%',
         onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08 }),
+        // Cuộn ngược lên tới khối chưa hiện (vd. mở lại trang ở giữa rồi cuộn lên): hiện luôn
+        onEnterBack: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.04 }),
       });
+      // Khối đã ở trong hoặc phía trên màn hình lúc tải (kể cả khi trình duyệt nhớ vị trí cuộn): hiện ngay, không chờ cuộn
+      const seen = rest.filter((el) => el.getBoundingClientRect().top < window.innerHeight * 0.88);
+      if (seen.length) gsap.to(seen, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.06 });
     }
 
     // Tuyên ngôn: từng từ sáng dần theo cuộn
@@ -433,6 +439,16 @@ function initForm() {
   const btnLabel = btn.querySelector<HTMLElement>('[data-btn-text]')!;
   const original = btnLabel.textContent;
 
+  // Đến từ nút "Muốn web kiểu này" ở trang Dự án (?mau=<id>): điền sẵn lời nhắn và chọn "Làm web theo yêu cầu"
+  const mau = new URLSearchParams(location.search).get('mau');
+  const names: Record<string, string> = JSON.parse(form.dataset.templates ?? '{}');
+  if (mau && names[mau]) {
+    const msg = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
+    if (msg && !msg.value) msg.value = String(form.dataset.templateLine ?? '').replace('{name}', names[mau]);
+    const web = form.querySelector<HTMLInputElement>('input[name="services"]');
+    if (web) web.checked = true;
+  }
+
   const setErr = (input: HTMLInputElement | HTMLTextAreaElement, msg: string) => {
     const err = input.closest('.field')?.querySelector<HTMLElement>('.field__err');
     if (err) err.textContent = msg;
@@ -462,10 +478,25 @@ function initForm() {
     btn.disabled = true;
     btnLabel.textContent = msgs.sending;
 
-    // TODO: gửi dữ liệu thật — ví dụ Web3Forms / Formspree / API riêng / Google Sheet.
-    // const data = Object.fromEntries(new FormData(form));
-    // await fetch('https://api.web3forms.com/submit', { method: 'POST', body: JSON.stringify({...data, access_key: '...'}) })
-    await new Promise((r) => setTimeout(r, 900));
+    // Chưa có dịch vụ nhận form (TODO: Web3Forms / Formspree / API riêng). Không giả vờ đã gửi: mở ứng dụng email của khách
+    // với thư soạn sẵn gửi tới hộp thư OneSpeedy (data-to); trang báo rõ khách cần bấm Gửi trong email.
+    const mail = JSON.parse(form.dataset.mail ?? '{}');
+    const data = new FormData(form);
+    const val = (k: string) => String(data.get(k) ?? '').trim();
+    const services = data.getAll('services').map(String).join(', ');
+    const line = (label: string, value: string) => (value ? [`${label}: ${value}`] : []);
+    const lines = [
+      ...line(mail.labels?.name ?? 'Name', val('name')),
+      ...line(mail.labels?.email ?? 'Email', val('email')),
+      ...line(mail.labels?.phone ?? 'Phone', val('phone')),
+      ...line(mail.labels?.company ?? 'Company', val('company')),
+      ...line(mail.labels?.services ?? 'Interested in', services),
+      '',
+      val('message'),
+    ];
+    const subject = String(mail.subject ?? '').replace('{name}', val('name'));
+    window.location.href = `mailto:${form.dataset.to ?? ''}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    await new Promise((r) => setTimeout(r, 300));
 
     form.classList.add('is-sent');
     btn.disabled = false;
@@ -617,25 +648,11 @@ function initChat() {
       after?.();
     }, reduced ? 50 : 700 + Math.min(text.length * 8, 900));
   };
+  // Khung chat chưa nối với người thật: không xin SĐT/email (sẽ không tới ai), chỉ chỉ đường tới các kênh thật ở chân khung chat.
   const askLead = () => {
     if (leadAsked) return;
     leadAsked = true;
-    botSay(t.leadPrompt, () => {
-      const wrap = document.createElement('form');
-      wrap.className = 'chat__lead';
-      wrap.innerHTML = `<input type="text" required placeholder="${t.leadPlaceholder}" aria-label="${t.leadPlaceholder}"><button type="submit">${t.send}</button>`;
-      wrap.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const v = wrap.querySelector('input')!.value.trim();
-        if (!v) return;
-        // TODO: gửi số điện thoại / email về CSKH (email, Telegram, CRM…)
-        wrap.remove();
-        add(v, 'me');
-        botSay(t.leadThanks);
-      });
-      body.appendChild(wrap);
-      scrollDown();
-    });
+    botSay(t.leadPrompt);
   };
   const start = () => {
     if (started) return;

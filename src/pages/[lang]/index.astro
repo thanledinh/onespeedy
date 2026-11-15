@@ -7,11 +7,11 @@ import Btn from '../../components/Btn.astro';
 import Logo from '../../components/Logo.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import StepArt from '../../components/StepArt.astro';
-import phoDesk from '../../assets/mau/02-pho-lan-desktop.png';
-import phoDeskVi from '../../assets/mau/02-pho-lan-vi-desktop.png';
-import spaPhone from '../../assets/mau/04-suong-spa-mobile.png';
+import realtorDesk from '../../assets/mau/05-realtor-desktop.png';
+import realtorPhone from '../../assets/mau/05-realtor-mobile.png';
 import nailDesk from '../../assets/mau/01-nail-atelier-desktop.png';
-import { useT, path, contact, type Lang } from '../../i18n/ui';
+import seoShot from '../../assets/seo-ops/tuan-nay.webp';
+import { useT, path, contact, seoOps, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -21,11 +21,10 @@ const lang = Astro.params.lang as Lang;
 const t = useT(lang);
 const h = t.home;
 const tpls = t.workPage.templates;
-// 4 dịch vụ chính cho lưới bento (vị trí trong t.services, cũng là số icon trong ServiceIcon)
-const bento = [0, 1, 2, 4];
+// 4 mảng OneSpeedy cho lưới bento: làm web, SEO Ops, CMS, Analytics (h.offers; icon = số icon trong ServiceIcon)
+const offerHref = (to: string) => (to === 'seo' ? seoOps[lang] : path(lang, to as 'services' | 'contact'));
 const view = lang === 'vi' ? { desk: 'bản máy tính', phone: 'bản điện thoại' } : { desk: 'desktop view', phone: 'mobile view' };
-const pho = tpls.find((x) => x.id === 'pho')!;
-const spa = tpls.find((x) => x.id === 'spa')!;
+const realtorAlt = lang === 'vi' ? 'Mẫu web môi giới bất động sản' : 'Real estate agent website template';
 const nail = tpls.find((x) => x.id === 'nail')!;
 ---
 
@@ -41,7 +40,7 @@ const nail = tpls.find((x) => x.id === 'nail')!;
         <p class="lh-lead" data-reveal>{h.lead}</p>
         <div class="lh-actions" data-reveal>
           <Btn href={path(lang, 'contact')}>{h.ctaPrimary}</Btn>
-          <a class="lh-more" href={path(lang, 'work')}>
+          <a class="lh-more" href={seoOps[lang]}>
             <i aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></i>
             {h.heroSecondary}
           </a>
@@ -66,24 +65,24 @@ const nail = tpls.find((x) => x.id === 'nail')!;
         <div class="lh-browser">
           <div class="lh-browser__bar" aria-hidden="true"><i></i><i></i><i></i><span>{t.workPage.badge}</span></div>
           <Picture
-            src={lang === 'vi' ? phoDeskVi : phoDesk}
+            src={realtorDesk}
             formats={['avif', 'webp']}
             fallbackFormat="jpg"
             widths={[640, 960, 1440]}
             sizes="(max-width: 960px) 92vw, 48vw"
-            alt={`${pho.name} — ${view.desk}`}
+            alt={`${realtorAlt} — ${view.desk}`}
             loading="eager"
             fetchpriority="high"
           />
         </div>
         <div class="lh-phone">
           <Picture
-            src={spaPhone}
+            src={realtorPhone}
             formats={['avif', 'webp']}
             fallbackFormat="jpg"
             widths={[240, 480]}
             sizes="(max-width: 960px) 24vw, 12vw"
-            alt={`${spa.name} — ${view.phone}`}
+            alt={`${realtorAlt} — ${view.phone}`}
           />
         </div>
         <span class="lh-chip lh-chip--a">
@@ -110,32 +109,32 @@ const nail = tpls.find((x) => x.id === 'nail')!;
     </div>
   </div>
 
-  <!-- DỊCH VỤ: lưới bento 2×2, thẻ trắng xen thẻ navy -->
+  <!-- CHÚNG TÔI LÀM GÌ: lưới bento 2×2 (làm web, SEO Ops, CMS, Analytics), thẻ trắng xen thẻ navy -->
   <section class="lh-section">
     <div class="container">
       <div class="lh-head">
-        <h2 class="lh-h2" data-reveal><mark class="lh-mark">{h.servicesLabel}</mark></h2>
-        <p data-reveal>{h.servicesTitle}</p>
+        <h2 class="lh-h2" data-reveal><mark class="lh-mark">{h.offerLabel}</mark></h2>
+        <p data-reveal>{h.offerText}</p>
       </div>
       <div class="lh-bento">
         {
-          bento.map((i, k) => {
-            const s = t.services[i];
+          h.offers.map((s, k) => {
             const dark = k === 1 || k === 2;
             return (
-              <a class:list={['lh-card', dark && 'lh-card--dark lh-dark']} href={path(lang, 'services')} data-reveal>
+              <a class:list={['lh-card', dark && 'lh-card--dark lh-dark']} href={offerHref(s.to)} data-reveal>
                 <div>
+                  {s.badge && <p class="lh-tag lh-tag--dark lh-card__badge">{s.badge}</p>}
                   <h3 class="lh-card__title">
                     <mark class:list={['lh-mark', dark && 'lh-mark--light']}>{s.title}</mark>
                   </h3>
                   <p>{s.text}</p>
                   <span class="lh-more">
                     <i aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></i>
-                    {h.cardMore}
+                    {s.more}
                   </span>
                 </div>
                 <div class="lh-card__art" aria-hidden="true">
-                  <ServiceIcon i={i} />
+                  <ServiceIcon i={s.icon} />
                   <b><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M5 3h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></b>
                 </div>
               </a>
@@ -143,7 +142,40 @@ const nail = tpls.find((x) => x.id === 'nail')!;
           })
         }
       </div>
-      <a class="lh-link" href={path(lang, 'services')} data-reveal>{h.servicesMore} →</a>
+    </div>
+  </section>
+
+  <!-- SEO OPS: sản phẩm của OneSpeedy, chữ bên trái, ảnh giao diện (số liệu ví dụ) bên phải -->
+  <section class="lh-section lh-section--top0" id="seo-ops">
+    <div class="container lh-split">
+      <div>
+        <p class="lh-tag" data-reveal>{h.seo.label}</p>
+        <h2 class="lh-h2 lh-split__title" data-reveal>{h.seo.titleA} <mark class="lh-mark">{h.seo.titleB}</mark></h2>
+        <p class="lh-lead" data-reveal>{h.seo.text}</p>
+        <ul class="lh-points lh-points--stack" data-reveal>
+          {
+            h.seo.points.map((x) => (
+              <li>
+                <svg viewBox="0 0 18 18" aria-hidden="true">
+                  <circle cx="9" cy="9" r="9" fill="var(--teal)" />
+                  <path d="M5.2 9.2l2.5 2.4 5-5.2" fill="none" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {x}
+              </li>
+            ))
+          }
+        </ul>
+        <div class="lh-actions" data-reveal>
+          <Btn href={seoOps[lang]}>{h.seo.cta}</Btn>
+        </div>
+      </div>
+      <figure class="lh-split__shot" data-reveal>
+        <div class="lh-browser lh-browser--static">
+          <div class="lh-browser__bar" aria-hidden="true"><i></i><i></i><i></i><span>{h.seo.bar}</span></div>
+          <Picture src={seoShot} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[640, 960, 1440]} sizes="(max-width: 960px) 92vw, 52vw" alt={h.seo.alt} />
+        </div>
+        <figcaption>{h.seo.note}</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -226,7 +258,7 @@ const nail = tpls.find((x) => x.id === 'nail')!;
           <p>{h.ctaText}</p>
           <div class="lh-actions">
             <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
-            <Btn href={contact.booking || path(lang, 'contact')} variant="ghost" icon={false}>{t.nav.bookLong}</Btn>
+            <Btn href={contact.booking || `mailto:${contact.email}`} variant="ghost" icon={false}>{contact.booking ? t.nav.bookLong : t.nav.emailUs}</Btn>
           </div>
         </div>
         <Logo kind="monogram" tone="color" class="lh-cta__mark" />

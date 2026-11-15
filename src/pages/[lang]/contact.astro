@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Logo from '../../components/Logo.astro';
-import { useT, contact, type Lang } from '../../i18n/ui';
+import Btn from '../../components/Btn.astro';
+import { useT, contact, seoOps, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -12,6 +13,8 @@ const t = useT(lang);
 const p = t.contactPage;
 const f = p.form;
 const msgs = { required: f.required, invalidEmail: f.invalidEmail, sending: f.sending };
+// Thư soạn sẵn khi khách bấm gửi (form chưa có dịch vụ nhận, nút gửi mở ứng dụng email của khách)
+const mail = { subject: f.mailSubject, labels: { name: f.name, email: f.email, phone: f.phone, company: f.company, services: f.services, message: f.message } };
 // Số điện thoại VN chỉ hiện ở bản tiếng Việt
 const phone = lang === 'vi' ? contact.phone : '';
 const channels = [
@@ -22,19 +25,19 @@ const channels = [
 const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M5 3h8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 ---
 
-<Base lang={lang} page="contact">
-  <section class="phero" data-shape="bubble" data-place="corner">
+<Base lang={lang} page="contact" look="light">
+  <section class="lh-phero">
     <div class="container">
-      <p class="label" data-reveal>{p.label}</p>
-      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
-      <p class="lead" data-reveal>{p.lead}</p>
+      <p class="lh-tag" data-reveal>{p.label}</p>
+      <h1 class="lh-h1" data-reveal>{p.titleA} <mark class="lh-mark">{p.titleB}</mark></h1>
+      <p class="lh-lead" data-reveal>{p.lead}</p>
     </div>
   </section>
 
-  <section class="section--tight" style="padding-top:0" data-shape="sphere" data-place="right" data-opacity="0.6">
-    <div class="container contact-grid">
+  <section class="lh-section lh-section--top0">
+    <div class="container contact-grid lh-contact">
       <!-- TODO: nối form với dịch vụ nhận form (Web3Forms / Formspree / API riêng). Xem scripts/app.ts -> initForm -->
-      <form class="form" data-contact-form data-msgs={JSON.stringify(msgs)} novalidate data-reveal>
+      <form class="form" data-contact-form data-msgs={JSON.stringify(msgs)} data-to={contact.email} data-mail={JSON.stringify(mail)} data-templates={JSON.stringify(Object.fromEntries(t.workPage.templates.map((x) => [x.id, x.name])))} data-template-line={f.templateLine} novalidate data-reveal>
         <div class="form__grid">
           <div class="field">
             <input id="f-name" name="name" type="text" placeholder=" " autocomplete="name" required />
@@ -76,21 +79,6 @@ const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-
             </div>
           </fieldset>
 
-          <fieldset class="chips-group form__full" style="border:0;margin:0;padding-inline:0">
-            <legend class="sr-only">{f.budget}</legend>
-            <span aria-hidden="true">{f.budget}</span>
-            <div class="chips">
-              {
-                f.budgetOptions.map((o, i) => (
-                  <label class="chip">
-                    <input type="radio" name="budget" value={o} checked={i === 0} />
-                    <span>{o}</span>
-                  </label>
-                ))
-              }
-            </div>
-          </fieldset>
-
           <div class="field form__full" style="margin-top:12px">
             <textarea id="f-msg" name="message" rows="4" placeholder=" " required></textarea>
             <label for="f-msg">{f.message} *</label>
@@ -111,19 +99,19 @@ const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-
 
         <div class="form__success" role="status">
           <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
-            <circle cx="44" cy="44" r="40" stroke="rgba(245,247,246,.15)" stroke-width="2"></circle>
+            <circle cx="44" cy="44" r="40" stroke="rgba(11,23,32,.12)" stroke-width="2"></circle>
             <path d="M28 45l11 11 21-23" stroke="#18B6A4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" data-tick></path>
           </svg>
           <h2 class="h2" style="font-size:clamp(1.75rem,3vw,2.5rem)">{f.successTitle}</h2>
-          <p>{f.successText}</p>
+          <p>{f.successText.replaceAll('{email}', contact.email)}</p>
           <button type="button" class="link-arrow" data-form-again>{f.again}</button>
         </div>
       </form>
 
-      <aside data-reveal>
+      <aside class="lh-aside" data-reveal>
         {
           contact.booking && (
-            <a class="channel channel--book" href={contact.booking} rel="noopener" target="_blank" style="margin-bottom:12px">
+            <a class="channel channel--book" href={contact.booking} rel="noopener" target="_blank">
               <span>
                 <small>{t.nav.bookLong}</small>
                 <strong>{p.bookText}</strong>
@@ -156,23 +144,30 @@ const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-
             )
           }
         </div>
-        <p class="label" style="margin:40px 0 16px">{p.channelsTitle}</p>
-        <div class="channels">
-          {
-            channels.map((c) => (
-              <a class="channel" href={c.href} rel="noopener" target="_blank">
-                <span>
-                  <small>{c.k}</small>
-                  <strong>{c.name}</strong>
-                </span>
-                <Fragment set:html={arrow} />
-              </a>
-            ))
-          }
+        {
+          channels.length > 0 && (
+            <>
+              <p class="lh-aside__label">{p.channelsTitle}</p>
+              <div class="channels">
+                {channels.map((c) => (
+                  <a class="channel" href={c.href} rel="noopener" target="_blank">
+                    <span>
+                      <small>{c.k}</small>
+                      <strong>{c.name}</strong>
+                    </span>
+                    <Fragment set:html={arrow} />
+                  </a>
+                ))}
+              </div>
+            </>
+          )
+        }
+        <div class="lh-seo lh-dark">
+          <p class="lh-seo__title">{p.seoTitle}</p>
+          <p class="lh-seo__text">{p.seoText}</p>
+          <Btn href={seoOps[lang]}>{p.seoCta}</Btn>
         </div>
-        <div style="margin-top:48px;width:180px;opacity:.9">
-          <Logo />
-        </div>
+        <Logo tone="color" class="lh-aside__logo" />
       </aside>
     </div>
   </section>

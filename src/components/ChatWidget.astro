@@ -11,6 +11,9 @@ const channels = [
   { name: 'Zalo', href: contact.zalo },
   { name: 'Messenger', href: contact.messenger },
   { name: 'WhatsApp', href: contact.whatsapp },
+  // Kênh thật: khung chat chưa nối với người, nên chỉ đường tới điện thoại và email
+  { name: lang === 'vi' ? 'Gọi điện' : 'Call', href: contact.phone ? `tel:${contact.phone.replace(/\s/g, '')}` : '' },
+  { name: 'Email', href: contact.email ? `mailto:${contact.email}` : '' },
 ].filter((c) => c.href);
 ---
 
@@ -45,7 +48,7 @@ const channels = [
         <div class="chat__channels">
           <span>{t.channels}</span>
           {channels.map((c) => (
-            <a href={c.href} rel="noopener" target="_blank">
+            <a href={c.href} rel="noopener" target={c.href.startsWith('http') ? '_blank' : undefined}>
               {c.name}
             </a>
           ))}

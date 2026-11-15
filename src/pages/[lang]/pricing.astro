@@ -1,8 +1,9 @@
 ---
+// Bảng giá SEO Ops, giao diện sáng: 4 gói, nút chuyển tháng / năm chỉ bằng CSS (radio + label), danh sách "gói nào cũng có", hỏi báo giá làm web, câu hỏi thường gặp.
 import Base from '../../layouts/Base.astro';
 import Btn from '../../components/Btn.astro';
-import BigCta from '../../components/BigCta.astro';
-import { useT, path, contact, hasPage, type Lang } from '../../i18n/ui';
+import Logo from '../../components/Logo.astro';
+import { useT, path, contact, seoOps, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -11,156 +12,142 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const t = useT(lang);
 const p = t.pricingPage;
-const bookHref = contact.booking || path(lang, 'contact');
-const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null);
+const h = t.home;
 ---
 
-<Base lang={lang} page="pricing">
-  <section class="phero" data-shape="bars" data-place="corner">
+<Base lang={lang} page="pricing" look="light">
+  <section class="lh-phero">
     <div class="container">
-      <p class="label" data-reveal>{p.label}</p>
-      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
-      <p class="lead" data-reveal>{p.lead}</p>
+      <p class="lh-tag" data-reveal>{p.label}</p>
+      <h1 class="lh-h1" data-reveal>{p.titleA} <mark class="lh-mark">{p.titleB}</mark></h1>
+      <p class="lh-lead" data-reveal>{p.lead}</p>
     </div>
   </section>
 
-  <!-- Các gói -->
-  <section class="section--tight" style="padding-top:0" data-shape="bars" data-place="center" data-opacity="0.45">
+  <!-- BẢNG GIÁ -->
+  <section class="lh-section lh-section--pillar">
     <div class="container">
-      <div class="plans" style={`--plans:${p.plans.length}`}>
-        {
-          p.plans.map((plan, i) => (
-            <article class:list={['plan', plan.featured && 'plan--featured', plan.id === 'signature' && 'plan--signature']} data-reveal>
-              <header class="plan__head">
-                <span class="plan__num num">0{i + 1}</span>
-                {plan.featured && <span class="plan__badge">{p.recommended}</span>}
-              </header>
-              <h2 class="plan__name">{plan.name}</h2>
-              <p class="plan__for">{plan.for}</p>
-              <p class="plan__price">
-                {/\d/.test(plan.price) ? (
-                  <>
-                    <small>{p.from}</small>
-                    <span class="num">${plan.price}</span>
-                  </>
-                ) : (
-                  <span class="plan__talk">{plan.price}</span>
-                )}
-              </p>
-              <ul class="plan__list">
-                {plan.features.map((f) => <li>{f}</li>)}
-              </ul>
-              <Btn href={bookHref} variant={plan.featured ? 'primary' : 'ghost'} class="plan__cta">
-                {p.choose}
-              </Btn>
-            </article>
-          ))
-        }
-      </div>
-      <p class="plans__note">{p.note}</p>
-      {
-        hasPage(lang, 'express') && p.expressHint && (
-          <p class="plans__express">
-            {p.expressHint} <a href={path(lang, 'express')}>{p.expressLink} →</a>
-          </p>
-        )
-      }
-    </div>
-  </section>
+      <div class="lh-price">
+        <input class="lh-price__radio" type="radio" name="lh-billing" id="lh-bill-m" checked />
+        <input class="lh-price__radio" type="radio" name="lh-billing" id="lh-bill-y" />
+        <div class="lh-toggle">
+          <label for="lh-bill-m">{p.monthly}</label>
+          <label for="lh-bill-y">{p.yearly}</label>
+        </div>
 
-  <!-- Gói nào cũng có + tùy chọn thêm -->
-  <section class="section--tight">
-    <div class="container incl">
-      <div data-reveal>
-        <p class="label">{p.includedTitle}</p>
-        <ul class="incl__list">
-          {p.included.map((x) => <li>{x}</li>)}
-        </ul>
-      </div>
-      <div data-reveal>
-        <p class="label">{p.addonsTitle}</p>
-        <ul class="addons">
+        <div class="lh-plans">
           {
-            p.addons.map((a) => (
+            p.plans.map((pl) => (
+              <article class:list={['lh-plan', pl.featured && 'lh-plan--featured lh-dark']}>
+                <header class="lh-plan__head">
+                  <div class="lh-plan__top">
+                    <h2 class="lh-plan__name">{pl.name}</h2>
+                    {pl.badge && <span class="lh-plan__badge">{pl.badge}</span>}
+                  </div>
+                  <p class="lh-plan__for">{pl.for}</p>
+                </header>
+                <div class="lh-plan__price">
+                  <div class="lh-plan__m">
+                    <p class="lh-plan__amount">
+                      <strong>{pl.monthly}</strong>
+                      <span>{pl.monthlyUnit}</span>
+                    </p>
+                    <p class="lh-plan__small">{pl.monthlyNote}</p>
+                  </div>
+                  <div class="lh-plan__y">
+                    <p class="lh-plan__amount">
+                      <strong>{pl.yearly}</strong>
+                      <span>{pl.yearlyUnit}</span>
+                    </p>
+                    <p class="lh-plan__small">{pl.yearlyNote}</p>
+                  </div>
+                </div>
+                <div class="lh-plan__btn">
+                  <Btn
+                    href={pl.id === 'dfy' ? path(lang, 'contact') : seoOps[lang]}
+                    variant={pl.featured ? 'primary' : 'ghost'}
+                    icon={false}
+                  >
+                    {pl.cta}
+                  </Btn>
+                </div>
+                {pl.list.length > 0 ? (
+                  <ul class="lh-plan__checks">
+                    {pl.list.map((x) => (
+                      <li>
+                        <svg viewBox="0 0 18 18" aria-hidden="true">
+                          <circle cx="9" cy="9" r="9" fill="var(--teal)" />
+                          <path d="M5.2 9.2l2.5 2.4 5-5.2" fill="none" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        {x}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <dl class="lh-plan__limits">
+                    {pl.limits.map((v, i) => (
+                      <div>
+                        <dt>{p.limitLabels[i]}</dt>
+                        <dd>{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </article>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="lh-included" data-reveal>
+        <h2 class="lh-included__title">{p.includedTitle}</h2>
+        <ul class="lh-points lh-included__list">
+          {
+            p.included.map((x) => (
               <li>
-                <span>{a.name}</span>
-                <span class="addons__price">
-                  <strong class:list={[/\d/.test(a.price) && 'num']}>{a.price}</strong> <small>{a.unit}</small>
-                </span>
+                <svg viewBox="0 0 18 18" aria-hidden="true">
+                  <circle cx="9" cy="9" r="9" fill="var(--teal)" />
+                  <path d="M5.2 9.2l2.5 2.4 5-5.2" fill="none" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {x}
               </li>
             ))
           }
         </ul>
       </div>
+      <p class="lh-price__note">{p.note}</p>
     </div>
   </section>
 
-  <!-- So sánh -->
-  <section class="section--tight">
+  <!-- LÀM WEB, CMS, ANALYTICS: BÁO GIÁ THEO DỰ ÁN -->
+  <section class="lh-section lh-section--pillar">
     <div class="container">
-      <div class="shead">
+      <div class="lh-quote" data-reveal>
         <div>
-          <p class="label">{p.label}</p>
-          <h2 class="h2" data-split>{p.compareTitle}</h2>
+          <h2 class="lh-quote__title">{p.quoteTitle}</h2>
+          <p>{p.quoteText}</p>
         </div>
+        <Btn href={path(lang, 'contact')}>{p.quoteCta}</Btn>
       </div>
-      <div class="compare-wrap" data-reveal data-lenis-prevent-horizontal>
-        <table class="compare">
-          <thead>
-            <tr>
-              <th scope="col">{p.compareFeature}</th>
-              {p.plans.map((plan) => <th scope="col" class:list={[plan.featured && 'is-featured']}>{plan.name}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {
-              p.compare.map((row) => (
-                <tr>
-                  <th scope="row">{row[0]}</th>
-                  {row.slice(1).map((v, j) => {
-                    const c = cell(v);
-                    return (
-                      <td class:list={[p.plans[j].featured && 'is-featured']}>
-                        {c ? (
-                          <span class={`mark mark--${c}`} title={p.compareLegend[c]}>
-                            <span class="sr-only">{p.compareLegend[c]}</span>
-                          </span>
-                        ) : (
-                          v
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-      <p class="compare__legend">
-        <span><span class="mark mark--yes"></span>{p.compareLegend.yes}</span>
-        <span><span class="mark mark--add"></span>{p.compareLegend.add}</span>
-        <span><span class="mark mark--no"></span>{p.compareLegend.no}</span>
-      </p>
     </div>
   </section>
 
-  <!-- FAQ giá -->
-  <section class="section" data-shape="bars" data-place="left" data-opacity="0.55">
-    <div class="container faq-wrap">
+  <!-- CÂU HỎI THƯỜNG GẶP -->
+  <section class="lh-section">
+    <div class="container lh-faq-wrap">
       <div>
-        <p class="label">FAQ</p>
-        <h2 class="h2" style="margin-top:24px" data-split>{p.faqTitle}</h2>
+        <p class="lh-tag" data-reveal>{p.faqLabel}</p>
+        <h2 class="lh-h2 lh-split__title" data-reveal>{p.faqTitle}</h2>
       </div>
-      <div class="faq">
+      <div class="lh-faq">
         {
           p.faq.map((f) => (
             <details data-reveal>
               <summary>
                 {f.q}
-                <span class="faq__plus" aria-hidden="true" />
+                <span class="lh-faq__plus" aria-hidden="true" />
               </summary>
-              <div class="faq__a">
+              <div class="lh-faq__a">
                 <p>{f.a}</p>
               </div>
             </details>
@@ -170,5 +157,22 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
     </div>
   </section>
 
-  <BigCta lang={lang} />
+  <!-- LỜI MỜI CUỐI -->
+  <section class="lh-section lh-section--flush">
+    <div class="container">
+      <div class="lh-cta" data-reveal>
+        <div>
+          <h2 class="lh-h2">
+            {h.ctaTitleA} <mark class="lh-mark">{h.ctaTitleB}</mark>
+          </h2>
+          <p>{h.ctaText}</p>
+          <div class="lh-actions">
+            <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
+            <Btn href={contact.booking || `mailto:${contact.email}`} variant="ghost" icon={false}>{contact.booking ? t.nav.bookLong : t.nav.emailUs}</Btn>
+          </div>
+        </div>
+        <Logo kind="monogram" tone="color" class="lh-cta__mark" />
+      </div>
+    </div>
+  </section>
 </Base>

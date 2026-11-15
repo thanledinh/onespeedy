@@ -54,6 +54,29 @@ const { i, class: cls } = Astro.props;
     )
   }
   {
+    i === 6 && (
+      <Fragment>
+        <rect x="6" y="9" width="40" height="34" rx="4" />
+        <path d="M17 9v34" />
+        <path d="M10 17h3M10 23h3M10 29h3" />
+        <path d="M23 18h16M23 25h12M23 32h8" />
+        <circle cx="38" cy="33" r="3" fill="currentColor" stroke="none" />
+      </Fragment>
+    )
+  }
+  {
+    i === 7 && (
+      <Fragment>
+        <path d="M8 8v36h36" />
+        <rect x="15" y="30" width="5" height="9" rx="1.5" />
+        <rect x="24" y="24" width="5" height="15" rx="1.5" />
+        <rect x="33" y="19" width="5" height="20" rx="1.5" />
+        <path d="M14 21l10-7 9 4 7-6" />
+        <circle cx="42" cy="10" r="2.5" fill="currentColor" stroke="none" />
+      </Fragment>
+    )
+  }
+  {
     i === 5 && (
       <Fragment>
         <path d="M40 26a14 14 0 1 1-4.1-9.9" />

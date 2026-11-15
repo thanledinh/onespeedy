@@ -7,8 +7,8 @@ import nailPhone from '../assets/mau/01-nail-atelier-mobile.png';
 import phoDesk from '../assets/mau/02-pho-lan-desktop.png';
 import phoDeskVi from '../assets/mau/02-pho-lan-vi-desktop.png';
 import phoPhone from '../assets/mau/02-pho-lan-mobile.png';
-import guongDesk from '../assets/mau/03-guong-ppf-desktop.png';
-import guongPhone from '../assets/mau/03-guong-ppf-mobile.png';
+import realtorDesk from '../assets/mau/05-realtor-desktop.png';
+import realtorPhone from '../assets/mau/05-realtor-mobile.png';
 import spaDesk from '../assets/mau/04-suong-spa-desktop.png';
 import spaPhone from '../assets/mau/04-suong-spa-mobile.png';
 import type { Lang, UI } from '../i18n/ui';
@@ -17,7 +17,7 @@ import type { Lang, UI } from '../i18n/ui';
 const shots = {
   nail: { desk: nailDesk, deskVi: nailDesk, phone: nailPhone },
   pho: { desk: phoDesk, deskVi: phoDeskVi, phone: phoPhone },
-  guong: { desk: guongDesk, deskVi: guongDesk, phone: guongPhone },
+  realtor: { desk: realtorDesk, deskVi: realtorDesk, phone: realtorPhone },
   spa: { desk: spaDesk, deskVi: spaDesk, phone: spaPhone },
 };
 
@@ -69,14 +69,13 @@ const view = lang === 'vi' ? { desk: 'bản máy tính', phone: 'bản điện t
     detail && (
       <div class="work__detail">
         <p class="work__quote">“{tpl.quote}”</p>
-        <p class="work__plan">{tpl.planLine}</p>
         <ul class="work__points">
           {tpl.points.map((x) => (
             <li>{x}</li>
           ))}
         </ul>
         {cta && (
-          <a class="work__cta" href={cta.href}>
+          <a class="work__cta" href={`${cta.href}?mau=${tpl.id}`}>
             {cta.text} →
           </a>
         )}

@@ -1,8 +1,10 @@
 ---
+// Dự án (mẫu giao diện), giao diện sáng.
 import Base from '../../layouts/Base.astro';
 import WorkCard from '../../components/WorkCard.astro';
-import BigCta from '../../components/BigCta.astro';
-import { useT, path, type Lang } from '../../i18n/ui';
+import Btn from '../../components/Btn.astro';
+import Logo from '../../components/Logo.astro';
+import { useT, path, contact, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -11,36 +13,66 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const t = useT(lang);
 const p = t.workPage;
+const h = t.home;
 const cta = { text: p.cta, href: path(lang, 'contact') };
 ---
 
-<Base lang={lang} page="work">
-  <section class="phero" data-shape="knot" data-place="corner">
+<Base lang={lang} page="work" look="light">
+  <section class="lh-phero">
     <div class="container">
-      <p class="label" data-reveal>{p.label}</p>
-      <h1 class="display" data-split>{p.titleA} <span class="thin">{p.titleB}</span></h1>
-      <p class="lead" data-reveal>{p.lead}</p>
+      <p class="lh-tag" data-reveal>{p.label}</p>
+      <h1 class="lh-h1" data-reveal>{p.titleA} <mark class="lh-mark">{p.titleB}</mark></h1>
+      <p class="lh-lead" data-reveal>{p.lead}</p>
     </div>
   </section>
 
-  <section class="section--tight" data-shape="knot" data-place="center" data-opacity="0.5">
+  <section class="lh-section lh-section--top0">
     <div class="container">
-      <div class="works works--pair">
+      <div class="lh-works">
         {p.templates.map((tpl) => <WorkCard tpl={tpl} lang={lang} badge={p.badge} cta={cta} />)}
       </div>
-      <p class="works__note" data-reveal>{p.note}</p>
+      <p class="lh-note" data-reveal>{p.note}</p>
     </div>
   </section>
 
   <!-- Điểm chung của các mẫu -->
-  <section class="section--tight">
+  <section class="lh-section lh-section--flush">
     <div class="container">
-      <p class="label" data-reveal>{p.commonTitle}</p>
-      <ul class="incl__list works__common" data-reveal>
-        {p.common.map((x) => <li>{x}</li>)}
-      </ul>
+      <div class="lh-common" data-reveal>
+        <h2 class="lh-h2 lh-common__title"><mark class="lh-mark">{p.commonTitle}</mark></h2>
+        <ul class="lh-points lh-points--stack">
+          {
+            p.common.map((x) => (
+              <li>
+                <svg viewBox="0 0 18 18" aria-hidden="true">
+                  <circle cx="9" cy="9" r="9" fill="var(--teal)" />
+                  <path d="M5.2 9.2l2.5 2.4 5-5.2" fill="none" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {x}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
   </section>
 
-  <BigCta lang={lang} />
+  <!-- LỜI MỜI CUỐI -->
+  <section class="lh-section">
+    <div class="container">
+      <div class="lh-cta" data-reveal>
+        <div>
+          <h2 class="lh-h2">
+            {h.ctaTitleA} <mark class="lh-mark">{h.ctaTitleB}</mark>
+          </h2>
+          <p>{h.ctaText}</p>
+          <div class="lh-actions">
+            <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
+            <Btn href={contact.booking || `mailto:${contact.email}`} variant="ghost" icon={false}>{contact.booking ? t.nav.bookLong : t.nav.emailUs}</Btn>
+          </div>
+        </div>
+        <Logo kind="monogram" tone="color" class="lh-cta__mark" />
+      </div>
+    </div>
+  </section>
 </Base>
