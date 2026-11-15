@@ -1523,3 +1523,14 @@ html[data-look='light'] section[id] {
 .lh-nf {
   min-height: 62vh;
 }
+
+/* Gạch dưới teal thay cho khối nền (tiêu đề trang Dịch vụ: "in one place." / "gom về một chỗ."; chủ chọn 15/11/2026) */
+.lh-under {
+  background: none;
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--teal);
+  text-decoration-thickness: 0.09em;
+  text-underline-offset: 0.12em;
+  text-decoration-skip-ink: none;
+}
