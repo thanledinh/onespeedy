@@ -5,13 +5,17 @@
    ============================================================ */
 .plans {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--plans, 4), minmax(0, 1fr));
   gap: clamp(12px, 1.4vw, 20px);
   align-items: stretch;
 }
 @media (max-width: 1180px) {
   .plans {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Số gói lẻ (bản EN có 3 gói): thẻ cuối trải hết hàng thay vì nằm lẻ nửa hàng */
+  .plans > .plan:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
 @media (max-width: 640px) {
@@ -104,6 +108,17 @@
   font-size: clamp(2.4rem, 3.4vw, 3.2rem);
   font-weight: 300;
   letter-spacing: -0.04em;
+  line-height: 1;
+}
+/* Giá dạng chữ ("Let's talk"): giữ chiều cao hàng giá bằng các thẻ có số */
+.plan__talk {
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(2.4rem, 3.4vw, 3.2rem);
+  font-family: var(--font-en);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
   line-height: 1;
 }
 .plan__list {

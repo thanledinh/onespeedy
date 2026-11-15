@@ -39,17 +39,23 @@ export function path(lang: Lang, page: PageKey) {
   return `/${lang}/${routes[page]}`;
 }
 
+// Trang chỉ có bản tiếng Việt (Express là gói cho tiệm nhỏ ở VN, không hiện với khách quốc tế).
+export const viOnlyPages: PageKey[] = ['express'];
+export function hasPage(lang: Lang, page: PageKey) {
+  return lang === 'vi' || !viOnlyPages.includes(page);
+}
+
 // Thông tin liên hệ — TODO: điền thông tin thật khi có. Để trống ('') thì mục đó tự ẩn.
 export const contact = {
   // Link đặt lịch gọi (Google Calendar / Calendly). Để trống thì nút "Đặt lịch gọi" dẫn về trang Liên hệ.
   booking: '',
   email: 'hello@onespeedy.com',
-  phone: '',
-  zalo: '#',
-  messenger: '#',
-  whatsapp: '#',
-  linkedin: '#',
-  facebook: '#',
+  phone: '0777 710 027',
+  zalo: '',
+  messenger: 'https://m.me/onespeedy',
+  whatsapp: '',
+  linkedin: '',
+  facebook: 'https://www.facebook.com/onespeedy',
 };
 
 // Gói OneSpeedy Express cho tiệm nhỏ.
@@ -121,8 +127,9 @@ const vi = {
   tagline: 'Fast to build. Easy to find.',
   home: {
     eyebrow: 'Studio thiết kế website · Việt Nam & quốc tế',
-    titleA: 'Nhanh để xây.',
-    titleB: 'Dễ được tìm thấy.',
+    // Tagline giữ nguyên tiếng Anh, không dịch.
+    titleA: 'Fast to build.',
+    titleB: 'Easy to find.',
     lead:
       'OneSpeedy thiết kế và phát triển website cao cấp cho những thương hiệu muốn dẫn đầu — đẹp như một tác phẩm, nhanh như một ứng dụng, và được tối ưu để khách hàng tìm thấy bạn trước.',
     ctaPrimary: 'Bắt đầu dự án',
@@ -172,17 +179,25 @@ const vi = {
     ctaTitleA: 'Có ý tưởng?',
     ctaTitleB: 'Hãy biến nó thành website đẳng cấp.',
     ctaText: 'Kể cho chúng tôi về dự án. Bạn sẽ nhận đề xuất hướng thiết kế và báo giá chi tiết.',
+    // Giao diện sáng của trang chủ
+    heroSecondary: 'Xem các mẫu',
+    heroPoints: ['Thiết kế riêng, không dùng theme có sẵn', 'Song ngữ Việt · Anh', 'Chuẩn SEO từ gốc'],
+    heroChips: ['Song ngữ VI · EN', 'Ưu tiên điện thoại', 'Chuẩn SEO'],
+    stripLabel: 'Đã có mẫu cho',
+    strip: ['Tiệm nail', 'Nhà hàng Việt', 'Head spa', 'Detailing & PPF'],
+    cardMore: 'Xem thêm',
+    processText: 'Bốn bước rõ ràng. Bạn duyệt thiết kế trước khi chúng tôi lập trình.',
   },
   services: [
     {
       title: 'Website doanh nghiệp',
       text: 'Hồ sơ năng lực số sang trọng, chuẩn SEO, dễ tự cập nhật nội dung.',
-      items: ['Thiết kế giao diện riêng', 'Trang quản trị nội dung', 'Song ngữ Việt — Anh', 'Tối ưu SEO on-page'],
+      items: ['Thiết kế giao diện riêng', 'Trang quản trị nội dung', 'Song ngữ theo yêu cầu', 'Tối ưu SEO on-page'],
     },
     {
       title: 'Landing page chuyển đổi',
       text: 'Trang đích cho chiến dịch quảng cáo, tối ưu từng điểm chạm để ra khách.',
-      items: ['Kịch bản nội dung bán hàng', 'Form & chat thu khách', 'Gắn mã đo lường quảng cáo', 'Thử nghiệm A/B'],
+      items: ['Kịch bản nội dung bán hàng', 'Form nhận khách & nút đặt lịch', 'Gắn mã đo lường quảng cáo', 'Thử nghiệm A/B'],
     },
     {
       title: 'Thương mại điện tử',
@@ -202,7 +217,7 @@ const vi = {
     {
       title: 'Vận hành & bảo trì',
       text: 'Hosting, bảo mật, sao lưu và cập nhật — bạn tập trung kinh doanh.',
-      items: ['Hosting & tên miền', 'Sao lưu định kỳ', 'Giám sát bảo mật', 'Hỗ trợ cập nhật nội dung'],
+      items: ['Cài hosting trong tài khoản của bạn', 'Sao lưu định kỳ', 'Giám sát bảo mật', 'Hỗ trợ cập nhật nội dung'],
     },
   ],
   process: [
@@ -240,7 +255,7 @@ const vi = {
       },
       {
         q: 'Tôi có tự cập nhật nội dung được không?',
-        a: 'Có. Chúng tôi cung cấp trang quản trị dễ dùng và hướng dẫn chi tiết, để đội của bạn tự đăng bài, sửa chữ và thay hình.',
+        a: 'Có, với gói Signature và Custom: chúng tôi cung cấp trang quản trị dễ dùng và hướng dẫn chi tiết, để đội của bạn tự đăng bài, sửa chữ và thay hình. Với gói Launch, việc sửa nội dung nằm trong gói Chăm sóc website.',
       },
       {
         q: 'OneSpeedy có làm cho khách hàng nước ngoài không?',
@@ -272,7 +287,7 @@ const vi = {
       },
       {
         q: 'Có viết nội dung cho website không?',
-        a: 'Có, theo tùy chọn thêm. Nội dung được viết chuẩn SEO và song ngữ nếu cần.',
+        a: 'Có. Gói nào cũng đã gồm viết nội dung, soạn từ buổi phỏng vấn có ghi âm và website hiện tại của bạn, chuẩn SEO. Thêm ngôn ngữ tính theo tùy chọn thêm.',
       },
       {
         q: 'Website có được bảo hành không?',
@@ -308,7 +323,7 @@ const vi = {
         name: 'Phở Lan',
         quote: 'Ngon từ nước dùng.',
         industry: 'Nhà hàng Việt · Mỹ',
-        planLine: 'Gói Business · Anh + Việt',
+        planLine: 'Gói Launch + thêm ngôn ngữ · Anh + Việt',
         hue: 'slate',
         points: [
           'Hero là sơ đồ giải phẫu một tô phở: trong nồi, trong tô',
@@ -321,7 +336,7 @@ const vi = {
         name: 'Gương Studio',
         quote: 'Bề mặt sơn. Như gương.',
         industry: 'Detailing, dán PPF · Việt Nam',
-        planLine: 'Gói Signature · Tiếng Việt',
+        planLine: 'Gói Signature + cảnh 3D · Tiếng Việt',
         hue: 'teal',
         points: [
           'Tấm thân xe 3D chia trước / sau, kéo hoặc cuộn để so',
@@ -391,7 +406,7 @@ const vi = {
       services: 'Bạn quan tâm đến',
       serviceOptions: ['Website doanh nghiệp', 'Landing page', 'Thương mại điện tử', 'Website 3D', 'OneSpeedy Express', 'SEO', 'Bảo trì'],
       budget: 'Ngân sách dự kiến',
-      budgetOptions: ['Chưa xác định', 'Dưới 50 triệu', '50 – 150 triệu', 'Trên 150 triệu'],
+      budgetOptions: ['Chưa xác định', 'Dưới $3,000', '$3,000–5,000', '$5,000–10,000', '$10,000–20,000', '$20,000+'],
       message: 'Mô tả ngắn về dự án',
       submit: 'Gửi yêu cầu',
       sending: 'Đang gửi…',
@@ -403,7 +418,7 @@ const vi = {
       privacy: 'Thông tin của bạn chỉ dùng để liên hệ về dự án.',
     },
   },
-  // GIÁ TẠM — OneSpeedy cần duyệt lại tất cả con số trong pricingPage.
+  // Giá USD chung với bản EN (Launch, Signature theo quyết định 1 ngày 24/10/2026). Các add-on vẫn là giá tạm, cần duyệt lại.
   pricingPage: {
     label: 'Bảng giá',
     titleA: 'Giá rõ ràng.',
@@ -415,65 +430,58 @@ const vi = {
     expressLink: 'Xem OneSpeedy Express',
     recommended: 'Đề xuất',
     choose: 'Chọn gói này',
+    // Một bảng giá USD chung cho cả bản VI và EN (quyết định ngày 25/10/2026): gói và mức giá giống hệt bản EN.
     plans: [
       {
         id: 'launch',
         name: 'Launch',
         for: 'Website gọn cho một mục tiêu rõ ràng',
-        price: '1,000',
-        featured: false,
-        features: ['Đến 3 trang, thiết kế riêng', 'Hiệu ứng cuộn nhẹ nhàng', 'Form + chat thu khách', 'SEO cơ bản & tối ưu tốc độ', 'Gắn mã đo lường quảng cáo'],
-      },
-      {
-        id: 'business',
-        name: 'Business',
-        for: 'Website đầy đủ cho doanh nghiệp đang vận hành',
-        price: '3,000',
+        price: '3,900',
         featured: true,
-        features: ['Đến 8 trang', 'Song ngữ Việt — Anh', 'Trang quản trị nội dung', 'SEO on-page & dữ liệu có cấu trúc', 'Chuyển động & chuyển trang mượt mà'],
-      },
-      {
-        id: 'growth',
-        name: 'Growth',
-        for: 'Nhiều tính năng, kết nối hệ thống',
-        price: '5,000',
-        featured: false,
-        features: ['Số trang theo cấu trúc dự án', 'Tính năng riêng: đặt lịch, tài khoản, tìm kiếm…', 'Kết nối thanh toán, CRM, email', 'Đa ngôn ngữ', 'Hướng dẫn vận hành'],
+        features: ['Đến 6 trang, thiết kế riêng', 'Đã gồm viết nội dung, soạn từ buổi phỏng vấn có ghi âm', 'Form nhận khách hoặc nút đặt lịch nối với công cụ bạn đang dùng', 'SEO kỹ thuật & tối ưu tốc độ', '2 vòng chỉnh sửa'],
       },
       {
         id: 'signature',
         name: 'Signature',
-        for: 'Dự án lớn, may đo toàn bộ',
-        price: '8,000',
+        for: 'Website đầy đủ cho doanh nghiệp đang vận hành',
+        price: '7,500',
         featured: false,
-        features: ['Phân tích & thiết kế trải nghiệm riêng', 'Tính năng & quy trình phức tạp', 'Hiệu ứng nâng cao theo yêu cầu', 'Kiểm thử kỹ trên mọi thiết bị', 'Ưu tiên hỗ trợ'],
+        features: ['Đến 15 trang', 'Viết nội dung cho mọi trang', 'Chuyển nội dung & chuyển hướng từ website cũ', 'SEO on-page & dữ liệu có cấu trúc', 'Chuyển động & chuyển trang mượt mà'],
+      },
+      {
+        id: 'custom',
+        name: 'Custom',
+        for: 'Nhiều chi nhánh, đa ngôn ngữ hoặc nhiều tính năng',
+        price: 'Trao đổi',
+        featured: false,
+        features: ['Lên phạm vi cùng bạn', 'Tính năng riêng: tài khoản, tìm kiếm, bảng điều khiển…', 'Kết nối thanh toán, CRM, email', 'Đa ngôn ngữ', 'Ưu tiên hỗ trợ'],
       },
     ],
     includedTitle: 'Gói nào cũng có',
-    included: ['Thiết kế riêng theo thương hiệu', 'Hiển thị đẹp trên mọi thiết bị', 'Bạn sở hữu toàn bộ mã nguồn', 'Đo tốc độ trước khi bàn giao', 'Hướng dẫn sử dụng & bàn giao'],
+    included: ['Thiết kế riêng theo thương hiệu', 'Hiển thị đẹp trên mọi thiết bị', 'Bạn sở hữu mã nguồn và thiết kế sau khi thanh toán đủ', 'Đo tốc độ trước khi bàn giao', 'Hướng dẫn sử dụng & bàn giao'],
     addonsTitle: 'Tùy chọn thêm',
     addons: [
       { name: 'Bán hàng online', price: 'Báo giá', unit: 'theo quy mô' },
       { name: 'Cảnh 3D riêng', price: 'Báo giá', unit: 'theo độ phức tạp' },
       { name: 'Thêm ngôn ngữ', price: '+$400', unit: '/ ngôn ngữ' },
       { name: 'Trang bổ sung', price: '+$250', unit: '/ trang' },
-      { name: 'Viết nội dung chuẩn SEO', price: '+$300', unit: '/ 5 trang' },
-      { name: 'Chăm sóc website', price: '$150', unit: '/ tháng' },
+      { name: 'Chăm sóc website', price: 'Từ $190', unit: '/ tháng' },
       { name: 'SEO tăng trưởng', price: '$500', unit: '/ tháng' },
     ],
     compareTitle: 'So sánh các gói',
     compareFeature: 'Hạng mục',
     // 'yes' = có, 'no' = không, 'add' = tùy chọn thêm; chữ khác hiển thị nguyên văn
     compare: [
-      ['Số trang', 'Đến 3', 'Đến 8', 'Theo dự án', 'Theo dự án'],
-      ['Song ngữ', 'add', 'yes', 'yes', 'yes'],
-      ['Trang quản trị nội dung', 'no', 'yes', 'yes', 'yes'],
-      ['Tính năng riêng (đặt lịch, tài khoản…)', 'no', 'add', 'yes', 'yes'],
-      ['Kết nối hệ thống (thanh toán, CRM…)', 'no', 'add', 'yes', 'yes'],
-      ['Bán hàng online', 'add', 'add', 'add', 'add'],
-      ['Cảnh 3D riêng', 'add', 'add', 'add', 'add'],
-      ['Chuyển trang mượt mà', 'no', 'yes', 'yes', 'yes'],
-      ['SEO', 'Cơ bản', 'On-page', 'On-page', 'On-page + quốc tế'],
+      ['Số trang', 'Đến 6', 'Đến 15', 'Theo dự án'],
+      ['Viết nội dung', 'yes', 'yes', 'yes'],
+      ['Chuyển nội dung & chuyển hướng', 'no', 'yes', 'yes'],
+      ['Song ngữ', 'add', 'add', 'yes'],
+      ['Trang quản trị nội dung', 'no', 'yes', 'yes'],
+      ['Tính năng riêng (tài khoản, tìm kiếm…)', 'no', 'add', 'yes'],
+      ['Kết nối hệ thống (thanh toán, CRM…)', 'no', 'add', 'yes'],
+      ['Bán hàng online', 'add', 'add', 'add'],
+      ['Cảnh 3D riêng', 'add', 'add', 'add'],
+      ['SEO', 'Kỹ thuật', 'On-page', 'On-page + quốc tế'],
     ],
     compareLegend: { yes: 'Có', no: 'Không', add: 'Tùy chọn thêm' },
     faqTitle: 'Câu hỏi về giá',
@@ -537,7 +545,7 @@ const vi = {
       'Express dùng mẫu OneSpeedy đã thiết kế sẵn và một phạm vi cố định, nên không có các vòng thiết kế riêng — phần làm nên chi phí của một website may đo.',
       'Chuẩn kỹ thuật thì giữ nguyên như mọi website OneSpeedy: tải nhanh, chuẩn SEO, đẹp trên điện thoại.',
     ],
-    upgrade: 'Khi tiệm lớn lên và cần thiết kế riêng, bạn có thể nâng lên gói Launch hoặc Business.',
+    upgrade: 'Khi tiệm lớn lên và cần thiết kế riêng, bạn có thể nâng lên gói Launch hoặc Signature.',
     upgradeLink: 'Xem bảng giá',
     plan: {
       name: 'Express',
@@ -562,7 +570,7 @@ const vi = {
       },
       {
         q: 'Sau này muốn làm website riêng thì sao?',
-        a: 'Bạn có thể nâng lên gói Launch hoặc Business bất cứ lúc nào. Chúng tôi sẽ tư vấn phần nào giữ lại được.',
+        a: 'Bạn có thể nâng lên gói Launch hoặc Signature bất cứ lúc nào. Chúng tôi sẽ tư vấn phần nào giữ lại được.',
       },
     ],
   },
@@ -722,17 +730,24 @@ const en: typeof vi = {
     ctaTitleA: 'Have an idea?',
     ctaTitleB: "Let's make it a world-class website.",
     ctaText: "Tell us about your project. You'll get a design direction proposal and a detailed quote.",
+    heroSecondary: 'See templates',
+    heroPoints: ['Custom design, no off-the-shelf themes', 'English · Vietnamese', 'SEO built in from day one'],
+    heroChips: ['Bilingual EN · VI', 'Mobile first', 'SEO-ready'],
+    stripLabel: 'Templates for',
+    strip: ['Nail salons', 'Vietnamese restaurants', 'Head spas', 'Detailing & PPF'],
+    cardMore: 'Learn more',
+    processText: 'Four clear steps. You approve the design before we write code.',
   },
   services: [
     {
       title: 'Corporate websites',
       text: 'A premium digital profile — SEO-ready and easy to update yourself.',
-      items: ['Custom interface design', 'Content management', 'Multilingual by default', 'On-page SEO'],
+      items: ['Custom interface design', 'Content management', 'Multilingual on request', 'On-page SEO'],
     },
     {
       title: 'Conversion landing pages',
       text: 'Campaign landing pages where every touchpoint is tuned to win customers.',
-      items: ['Sales copy structure', 'Lead forms & live chat', 'Ad tracking setup', 'A/B testing'],
+      items: ['Sales copy structure', 'Lead forms & booking links', 'Ad tracking setup', 'A/B testing'],
     },
     {
       title: 'E-commerce',
@@ -752,7 +767,7 @@ const en: typeof vi = {
     {
       title: 'Care & maintenance',
       text: 'Hosting, security, backups and updates — you focus on the business.',
-      items: ['Hosting & domains', 'Scheduled backups', 'Security monitoring', 'Content update support'],
+      items: ['Hosting setup in your account', 'Scheduled backups', 'Security monitoring', 'Content update support'],
     },
   ],
   process: [
@@ -790,7 +805,7 @@ const en: typeof vi = {
       },
       {
         q: 'Can I update the content myself?',
-        a: 'Yes. You get an easy content dashboard and a walkthrough, so your team can publish posts, edit copy and swap images.',
+        a: 'Yes, on Signature and Custom: you get an easy content dashboard and a walkthrough, so your team can publish posts, edit copy and swap images. On Launch, content edits are covered by the Care plan.',
       },
       {
         q: 'Do you work with clients outside Vietnam?',
@@ -822,7 +837,7 @@ const en: typeof vi = {
       },
       {
         q: 'Do you write the website copy?',
-        a: 'Yes, as an add-on. Copy is SEO-ready and multilingual if needed.',
+        a: 'Yes. Copywriting is included in every plan: we draft it from a recorded interview and your existing site, SEO-ready. Extra languages are available as an add-on.',
       },
       {
         q: 'Is there a warranty?',
@@ -844,7 +859,7 @@ const en: typeof vi = {
         name: 'Mai Nail Atelier',
         quote: 'Small studio, careful hands.',
         industry: 'Nail salon · US',
-        planLine: 'Express plan · English',
+        planLine: 'Template · English',
         hue: 'gold',
         points: [
           'The cover is a fan of nail tips: real sets mixed with polish swatches',
@@ -857,7 +872,7 @@ const en: typeof vi = {
         name: 'Phở Lan',
         quote: 'Broth first.',
         industry: 'Vietnamese restaurant · US',
-        planLine: 'Business plan · English + Vietnamese',
+        planLine: 'Template · English + Vietnamese',
         hue: 'slate',
         points: [
           'The hero is an anatomy of a bowl of phở: in the pot, in the bowl',
@@ -870,7 +885,7 @@ const en: typeof vi = {
         name: 'Gương Studio',
         quote: 'Bề mặt sơn. Như gương.',
         industry: 'Detailing & PPF · Vietnam',
-        planLine: 'Signature plan · Vietnamese',
+        planLine: 'Template · Vietnamese',
         hue: 'teal',
         points: [
           'A 3D car panel split before / after: drag or scroll to compare',
@@ -883,7 +898,7 @@ const en: typeof vi = {
         name: 'Sương Head Spa',
         quote: 'Rest your head.',
         industry: 'Head spa · US',
-        planLine: 'Launch plan · English',
+        planLine: 'Template · English',
         hue: 'slate',
         points: [
           'The hero is a film strip of the one-hour wash on a 00–60 minute ruler',
@@ -938,9 +953,9 @@ const en: typeof vi = {
       phone: 'Phone / WhatsApp',
       company: 'Company',
       services: "You're interested in",
-      serviceOptions: ['Corporate website', 'Landing page', 'E-commerce', '3D website', 'OneSpeedy Express', 'SEO', 'Maintenance'],
+      serviceOptions: ['Corporate website', 'Landing page', 'E-commerce', '3D website', 'SEO', 'Maintenance'],
       budget: 'Estimated budget',
-      budgetOptions: ['Not sure yet', 'Under $2k', '$2k – $6k', 'Over $6k'],
+      budgetOptions: ['Not sure yet', 'Under $3,000', '$3,000–5,000', '$5,000–10,000', '$10,000–20,000', '$20,000+'],
       message: 'Briefly describe your project',
       submit: 'Send request',
       sending: 'Sending…',
@@ -952,7 +967,9 @@ const en: typeof vi = {
       privacy: 'Your details are only used to contact you about your project.',
     },
   },
-  // PLACEHOLDER PRICES — OneSpeedy must review every number in pricingPage.
+  // Giá bản EN (khách quốc tế) theo quyết định 1 ngày 24/10/2026 (D:\OneSpeedy\ke-hoach-quoc-te\ke-hoach.md):
+  // Launch from US$3,900, Signature from US$7,500, gói lớn hơn "Let's talk", Care from US$190/tháng.
+  // Các add-on còn lại vẫn là giá tạm, OneSpeedy cần duyệt lại.
   pricingPage: {
     label: 'Pricing',
     titleA: 'Clear pricing.',
@@ -960,8 +977,8 @@ const en: typeof vi = {
     lead: 'Plans scale with size and complexity, not website type. Prices below are starting points; a fixed quote follows a 15-minute call.',
     from: 'From',
     note: 'Indicative prices in USD.',
-    expressHint: 'A small shop just starting out?',
-    expressLink: 'See OneSpeedy Express',
+    expressHint: '',
+    expressLink: '',
     recommended: 'Recommended',
     choose: 'Choose this plan',
     plans: [
@@ -969,59 +986,51 @@ const en: typeof vi = {
         id: 'launch',
         name: 'Launch',
         for: 'A focused website with one clear goal',
-        price: '1,000',
-        featured: false,
-        features: ['Up to 3 custom pages', 'Subtle scroll effects', 'Lead form + live chat', 'Basic SEO & speed tuning', 'Ad tracking setup'],
-      },
-      {
-        id: 'business',
-        name: 'Business',
-        for: 'A complete website for an established business',
-        price: '3,000',
+        price: '3,900',
         featured: true,
-        features: ['Up to 8 pages', 'Bilingual by default', 'Content management', 'On-page SEO & structured data', 'Smooth motion & page transitions'],
-      },
-      {
-        id: 'growth',
-        name: 'Growth',
-        for: 'More features, connected systems',
-        price: '5,000',
-        featured: false,
-        features: ['Pages scoped to your project', 'Custom features: booking, accounts, search…', 'Payments, CRM & email integrations', 'Multilingual', 'Operations walkthrough'],
+        features: ['Up to 6 custom pages', 'Copywriting included, drafted from a recorded interview', 'Lead form or booking button linked to your existing tool', 'Technical SEO & speed tuning', '2 revision rounds'],
       },
       {
         id: 'signature',
         name: 'Signature',
-        for: 'Large, fully tailored projects',
-        price: '8,000',
+        for: 'A complete website for an established business',
+        price: '7,500',
         featured: false,
-        features: ['Custom experience research & design', 'Complex features & workflows', 'Advanced effects on request', 'Thorough testing on every device', 'Priority support'],
+        features: ['Up to 15 pages', 'Copywriting included for every page', 'Content migration & redirects from your old site', 'On-page SEO & structured data', 'Smooth motion & page transitions'],
+      },
+      {
+        id: 'custom',
+        name: 'Custom',
+        for: 'Multi-location, multilingual or feature-heavy projects',
+        price: "Let's talk",
+        featured: false,
+        features: ['Scope planned with you', 'Custom features: accounts, search, dashboards…', 'Payments, CRM & email integrations', 'Multilingual', 'Priority support'],
       },
     ],
     includedTitle: 'Every plan includes',
-    included: ['Custom design for your brand', 'Looks great on every device', 'You own all the code', 'Speed tested before handover', 'Training & handover'],
+    included: ['Custom design for your brand', 'Looks great on every device', 'You own the code and design once paid in full', 'Speed tested before handover', 'Training & handover'],
     addonsTitle: 'Add-ons',
     addons: [
       { name: 'Online store', price: 'Quote', unit: 'by scale' },
       { name: 'Custom 3D scene', price: 'Quote', unit: 'by complexity' },
       { name: 'Extra language', price: '+$400', unit: '/ language' },
       { name: 'Extra page', price: '+$250', unit: '/ page' },
-      { name: 'SEO copywriting', price: '+$300', unit: '/ 5 pages' },
-      { name: 'Website care', price: '$150', unit: '/ month' },
+      { name: 'Website care', price: 'From $190', unit: '/ month' },
       { name: 'SEO growth', price: '$500', unit: '/ month' },
     ],
     compareTitle: 'Compare plans',
     compareFeature: 'Feature',
     compare: [
-      ['Pages', 'Up to 3', 'Up to 8', 'Per project', 'Per project'],
-      ['Bilingual', 'add', 'yes', 'yes', 'yes'],
-      ['Content management', 'no', 'yes', 'yes', 'yes'],
-      ['Custom features (booking, accounts…)', 'no', 'add', 'yes', 'yes'],
-      ['Integrations (payments, CRM…)', 'no', 'add', 'yes', 'yes'],
-      ['Online store', 'add', 'add', 'add', 'add'],
-      ['Custom 3D scene', 'add', 'add', 'add', 'add'],
-      ['Smooth page transitions', 'no', 'yes', 'yes', 'yes'],
-      ['SEO', 'Basic', 'On-page', 'On-page', 'On-page + international'],
+      ['Pages', 'Up to 6', 'Up to 15', 'Per project'],
+      ['Copywriting', 'yes', 'yes', 'yes'],
+      ['Content migration & redirects', 'no', 'yes', 'yes'],
+      ['Bilingual', 'add', 'add', 'yes'],
+      ['Content management', 'no', 'yes', 'yes'],
+      ['Custom features (accounts, search…)', 'no', 'add', 'yes'],
+      ['Integrations (payments, CRM…)', 'no', 'add', 'yes'],
+      ['Online store', 'add', 'add', 'add'],
+      ['Custom 3D scene', 'add', 'add', 'add'],
+      ['SEO', 'Technical', 'On-page', 'On-page + international'],
     ],
     compareLegend: { yes: 'Included', no: 'Not included', add: 'Add-on' },
     faqTitle: 'Pricing questions',
@@ -1045,10 +1054,6 @@ const en: typeof vi = {
       {
         q: "I'm not sure which plan fits.",
         a: "Book a 15-minute call. We'll listen to your goals and recommend the right plan — even if it's the smallest one.",
-      },
-      {
-        q: 'I run a small shop on a modest budget.',
-        a: 'Take a look at OneSpeedy Express: an all-in website on a template we design, made for small shops just starting out.',
       },
     ],
   },
@@ -1084,7 +1089,7 @@ const en: typeof vi = {
       'Express uses templates OneSpeedy has already designed and a fixed scope, so there are no custom design rounds — the part that drives the cost of a tailor-made website.',
       'The technical standard stays the same as every OneSpeedy site: fast, SEO-ready and polished on phones.',
     ],
-    upgrade: 'When your shop grows and needs a custom design, you can move up to Launch or Business.',
+    upgrade: 'When your shop grows and needs a custom design, you can move up to Launch or Signature.',
     upgradeLink: 'See pricing',
     plan: {
       name: 'Express',
@@ -1109,7 +1114,7 @@ const en: typeof vi = {
       },
       {
         q: 'What if I want a custom website later?',
-        a: 'You can move up to Launch or Business at any time. We will advise you on what can be carried over.',
+        a: 'You can move up to Launch or Signature at any time. We will advise you on what can be carried over.',
       },
     ],
   },

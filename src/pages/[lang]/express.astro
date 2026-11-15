@@ -7,8 +7,9 @@ import Fill from '../../components/Fill.astro';
 import WorkCard from '../../components/WorkCard.astro';
 import { useT, path, express, type Lang } from '../../i18n/ui';
 
+// Chỉ bản tiếng Việt: /en/express/ chuyển hướng (astro.config.mjs + nginx.conf).
 export function getStaticPaths() {
-  return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
+  return [{ params: { lang: 'vi' } }];
 }
 
 const lang = Astro.params.lang as Lang;

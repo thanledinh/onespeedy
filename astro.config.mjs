@@ -7,4 +7,6 @@ export default defineConfig({
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   build: { inlineStylesheets: 'auto' },
   devToolbar: { enabled: false },
+  // Express chỉ có bản tiếng Việt. Tạm về /en/; đổi thành /en/clinics/ khi trang cửa trước (W7) xong — sửa cả nginx.conf.
+  redirects: { '/en/express': { status: 302, destination: '/en/' } },
 });

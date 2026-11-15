@@ -4,9 +4,11 @@ import '@fontsource/be-vietnam-pro/300.css';
 import '@fontsource/be-vietnam-pro/400.css';
 import '@fontsource/be-vietnam-pro/500.css';
 import '@fontsource/be-vietnam-pro/600.css';
+import '@fontsource/be-vietnam-pro/700.css';
 import '@fontsource-variable/sora/index.css';
 import '../styles/global.css';
 import '../styles/pages.css';
+import '../styles/light.css';
 
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -14,7 +16,7 @@ import Curtain from '../components/Curtain.astro';
 import ChatWidget from '../components/ChatWidget.astro';
 import Logo from '../components/Logo.astro';
 import NextPage from '../components/NextPage.astro';
-import { useT, path, contact, pageOrder, type Lang, type PageKey } from '../i18n/ui';
+import { useT, path, contact, pageOrder, hasPage, type Lang, type PageKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -22,9 +24,21 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  /** Layout tối giản (trang cửa trước cho khách quốc tế): không cảnh 3D, con trỏ, màn che, màn mở đầu, khung chat. */
+  minimal?: boolean;
+  /** Trang chung cho cả khách Việt và quốc tế (vd. 404): không khung chat, không số VN, không link trang chỉ-tiếng-Việt. */
+  neutral?: boolean;
+  /** Giao diện sáng (nền sáng, thẻ bento, nhấn teal): không cảnh 3D, grain, con trỏ, màn che, khối "trang sau". Đang thử trên trang chủ. */
+  look?: 'light';
 }
 
-const { lang, page, noindex = false } = Astro.props;
+const { lang, page, noindex = false, minimal = false, neutral = false, look } = Astro.props;
+const light = look === 'light';
+const calm = minimal || light;
+// hreflang chỉ phát cho trang có cả hai bản ngôn ngữ (Express chỉ có bản tiếng Việt)
+const bilingual = !!page && hasPage('vi', page) && hasPage('en', page);
+// Khung chat hiện chỉ là giao diện, chưa nối hệ thống thật: không hiện với khách quốc tế
+const showChat = lang === 'vi' && !minimal && !neutral;
 const t = useT(lang);
 const meta = page ? t.meta[page] : null;
 const title = Astro.props.title ?? meta?.title ?? 'OneSpeedy';
@@ -46,7 +60,13 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang={lang} data-scene={page === 'home' ? 'home' : 'page'} transition:animate="none">
+<html
+  lang={lang}
+  data-scene={page === 'home' ? 'home' : 'page'}
+  data-minimal={calm ? '' : undefined}
+  data-look={look}
+  transition:animate="none"
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -54,15 +74,15 @@ const jsonLd = {
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
-    {page && <link rel="alternate" hreflang="vi" href={alt('vi')} />}
-    {page && <link rel="alternate" hreflang="en" href={alt('en')} />}
-    {page && <link rel="alternate" hreflang="x-default" href={alt('vi')} />}
+    {bilingual && <link rel="alternate" hreflang="vi" href={alt('vi')} />}
+    {bilingual && <link rel="alternate" hreflang="en" href={alt('en')} />}
+    {bilingual && <link rel="alternate" hreflang="x-default" href={alt('vi')} />}
 
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0B1720" />
+    <meta name="theme-color" content={light ? '#F5F7F6' : '#0B1720'} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="OneSpeedy" />
@@ -77,7 +97,7 @@ const jsonLd = {
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <!-- Bật class js + màn mở đầu (chỉ lần đầu trong phiên, bỏ qua nếu giảm chuyển động) -->
+    <!-- Bật class js + màn mở đầu (chỉ lần đầu trong phiên, bỏ qua nếu giảm chuyển động hoặc layout tối giản) -->
     <script is:inline>
       (function () {
         var h = document.documentElement;
@@ -85,7 +105,7 @@ const jsonLd = {
         var seen = false;
         try { seen = sessionStorage.getItem('os-intro') === '1'; } catch (e) {}
         var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!seen && !rm) h.classList.add('intro');
+        if (!seen && !rm && !h.hasAttribute('data-minimal')) h.classList.add('intro');
       })();
     </script>
     <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}[data-split]{visibility:visible!important}</style></noscript>
@@ -95,11 +115,15 @@ const jsonLd = {
   <body>
     <a class="skip-link" href="#main">{t.nav.skip}</a>
 
-    <div class="scene" data-scene-host aria-hidden="true" transition:persist="scene">
-      <div class="scene__glow"></div>
-      <Logo kind="monogram" class="scene__fallback" />
-    </div>
-    <div class="grain" aria-hidden="true" transition:persist="grain"></div>
+    {
+      !calm && (
+        <div class="scene" data-scene-host aria-hidden="true" transition:persist="scene">
+          <div class="scene__glow" />
+          <Logo kind="monogram" class="scene__fallback" />
+        </div>
+      )
+    }
+    {!light && <div class="grain" aria-hidden="true" transition:persist="grain" />}
 
     <Header lang={lang} page={page} />
 
@@ -107,15 +131,23 @@ const jsonLd = {
       <slot />
     </main>
 
-    <Footer lang={lang} />
-    {page && pageOrder.includes(page) && <NextPage lang={lang} page={page} />}
+    <Footer lang={lang} neutral={neutral} />
+    {page && !light && pageOrder.includes(page) && <NextPage lang={lang} page={page} />}
 
-    <ChatWidget lang={lang} />
-    <Curtain />
-    <div class="cursor is-hidden" data-cursor-root aria-hidden="true" transition:persist="cursor">
-      <div class="cursor__dot"></div>
-      <div class="cursor__ring"><span></span></div>
-    </div>
+    {showChat && <ChatWidget lang={lang} />}
+    {
+      !calm && (
+        <>
+          <Curtain />
+          <div class="cursor is-hidden" data-cursor-root aria-hidden="true" transition:persist="cursor">
+            <div class="cursor__dot" />
+            <div class="cursor__ring">
+              <span />
+            </div>
+          </div>
+        </>
+      )
+    }
 
     <script>
       import '../scripts/app';

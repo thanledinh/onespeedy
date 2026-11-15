@@ -12,6 +12,8 @@ const t = useT(lang);
 const p = t.contactPage;
 const f = p.form;
 const msgs = { required: f.required, invalidEmail: f.invalidEmail, sending: f.sending };
+// Số điện thoại VN chỉ hiện ở bản tiếng Việt
+const phone = lang === 'vi' ? contact.phone : '';
 const channels = [
   { name: 'Zalo', href: contact.zalo, k: 'Chat' },
   { name: 'Messenger', href: contact.messenger, k: 'Chat' },
@@ -143,11 +145,11 @@ const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-
             )
           }
           {
-            contact.phone && (
-              <a class="channel" href={`tel:${contact.phone.replace(/\s/g, '')}`}>
+            phone && (
+              <a class="channel" href={`tel:${phone.replace(/\s/g, '')}`}>
                 <span>
                   <small>Hotline</small>
-                  <strong>{contact.phone}</strong>
+                  <strong>{phone}</strong>
                 </span>
                 <Fragment set:html={arrow} />
               </a>

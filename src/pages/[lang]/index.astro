@@ -1,11 +1,17 @@
 ---
+// Trang chủ, giao diện sáng (thử nghiệm theo mẫu sếp chọn): nền sáng, lưới thẻ bento, nhấn teal kiểu bút dạ.
+// Ảnh mẫu là ảnh chụp các mẫu giao diện thật trong kho (src/assets/mau), luôn gắn nhãn "Mẫu giao diện".
+import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Btn from '../../components/Btn.astro';
+import Logo from '../../components/Logo.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
-import Process from '../../components/Process.astro';
-import WorkCard from '../../components/WorkCard.astro';
-import BigCta from '../../components/BigCta.astro';
-import { useT, path, type Lang } from '../../i18n/ui';
+import StepArt from '../../components/StepArt.astro';
+import phoDesk from '../../assets/mau/02-pho-lan-desktop.png';
+import phoDeskVi from '../../assets/mau/02-pho-lan-vi-desktop.png';
+import spaPhone from '../../assets/mau/04-suong-spa-mobile.png';
+import nailDesk from '../../assets/mau/01-nail-atelier-desktop.png';
+import { useT, path, contact, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -14,131 +20,217 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const t = useT(lang);
 const h = t.home;
-const marquee = [...h.marquee, ...h.marquee];
-const cursorView = lang === 'vi' ? 'Xem' : 'View';
+const tpls = t.workPage.templates;
+// 4 dịch vụ chính cho lưới bento (vị trí trong t.services, cũng là số icon trong ServiceIcon)
+const bento = [0, 1, 2, 4];
+const view = lang === 'vi' ? { desk: 'bản máy tính', phone: 'bản điện thoại' } : { desk: 'desktop view', phone: 'mobile view' };
+const pho = tpls.find((x) => x.id === 'pho')!;
+const spa = tpls.find((x) => x.id === 'spa')!;
+const nail = tpls.find((x) => x.id === 'nail')!;
 ---
 
-<Base lang={lang} page="home">
+<Base lang={lang} page="home" look="light">
   <!-- HERO -->
-  <section class="hero" data-shape="ring" data-place="hero">
-    <div class="container">
-      <p class="label hero__eyebrow" data-reveal>{h.eyebrow}</p>
-      <h1 class="display hero__title" data-split>
-        <span class="line">{h.titleA}</span>
-        <span class="line thin">{h.titleB}</span>
-      </h1>
-      <div class="hero__bottom">
-        <div>
-          <p class="lead" data-reveal>{h.lead}</p>
-          <div class="hero__actions" data-reveal>
-            <Btn href={path(lang, 'contact')}>{h.ctaPrimary}</Btn>
-            <Btn href={path(lang, 'services')} variant="ghost" icon={false}>{h.ctaSecondary}</Btn>
-          </div>
+  <section class="lh-hero">
+    <div class="container lh-hero__grid">
+      <div>
+        <p class="lh-tag" data-reveal>{h.eyebrow}</p>
+        <h1 class="lh-h1" data-reveal>
+          {h.titleA}<br /><mark class="lh-mark">{h.titleB}</mark>
+        </h1>
+        <p class="lh-lead" data-reveal>{h.lead}</p>
+        <div class="lh-actions" data-reveal>
+          <Btn href={path(lang, 'contact')}>{h.ctaPrimary}</Btn>
+          <a class="lh-more" href={path(lang, 'work')}>
+            <i aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></i>
+            {h.heroSecondary}
+          </a>
         </div>
-        <div class="hero__scroll" data-reveal><i></i>{h.scroll}</div>
+        <ul class="lh-points" data-reveal>
+          {
+            h.heroPoints.map((x) => (
+              <li>
+                <svg viewBox="0 0 18 18" aria-hidden="true">
+                  <circle cx="9" cy="9" r="9" fill="var(--teal)" />
+                  <path d="M5.2 9.2l2.5 2.4 5-5.2" fill="none" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {x}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="lh-visual" data-reveal>
+        <div class="lh-visual__blob" aria-hidden="true"></div>
+        <div class="lh-browser">
+          <div class="lh-browser__bar" aria-hidden="true"><i></i><i></i><i></i><span>{t.workPage.badge}</span></div>
+          <Picture
+            src={lang === 'vi' ? phoDeskVi : phoDesk}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            widths={[640, 960, 1440]}
+            sizes="(max-width: 960px) 92vw, 48vw"
+            alt={`${pho.name} — ${view.desk}`}
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="lh-phone">
+          <Picture
+            src={spaPhone}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            widths={[240, 480]}
+            sizes="(max-width: 960px) 24vw, 12vw"
+            alt={`${spa.name} — ${view.phone}`}
+          />
+        </div>
+        <span class="lh-chip lh-chip--a">
+          <i aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7.5"></circle><path d="M2.5 10h15M10 2.5c2.2 2.3 2.2 12.7 0 15M10 2.5c-2.2 2.3-2.2 12.7 0 15"></path></svg></i>
+          {h.heroChips[0]}
+        </span>
+        <span class="lh-chip lh-chip--b">
+          <i aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2.5" width="8" height="15" rx="2"></rect><path d="M9 14.5h2"></path></svg></i>
+          {h.heroChips[1]}
+        </span>
+        <span class="lh-chip lh-chip--c">
+          <i aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="M12.5 12.5l5 5"></path></svg></i>
+          {h.heroChips[2]}
+        </span>
       </div>
     </div>
   </section>
 
-  <!-- MARQUEE -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      {marquee.map((m) => <span class="marquee__item">{m}</span>)}
+  <!-- NGÀNH ĐÃ CÓ MẪU -->
+  <div class="lh-strip">
+    <div class="container lh-strip__inner">
+      <span class="lh-strip__label">{h.stripLabel}</span>
+      {h.strip.map((x) => <span class="lh-strip__item">{x}</span>)}
     </div>
   </div>
 
-  <!-- MANIFESTO -->
-  <section class="section" data-shape="sphere" data-place="right">
+  <!-- DỊCH VỤ: lưới bento 2×2, thẻ trắng xen thẻ navy -->
+  <section class="lh-section">
     <div class="container">
-      <p class="label" data-reveal>{h.manifestoLabel}</p>
-      <p class="manifesto__text" data-scrub-words>{h.manifesto}</p>
+      <div class="lh-head">
+        <h2 class="lh-h2" data-reveal><mark class="lh-mark">{h.servicesLabel}</mark></h2>
+        <p data-reveal>{h.servicesTitle}</p>
+      </div>
+      <div class="lh-bento">
+        {
+          bento.map((i, k) => {
+            const s = t.services[i];
+            const dark = k === 1 || k === 2;
+            return (
+              <a class:list={['lh-card', dark && 'lh-card--dark lh-dark']} href={path(lang, 'services')} data-reveal>
+                <div>
+                  <h3 class="lh-card__title">
+                    <mark class:list={['lh-mark', dark && 'lh-mark--light']}>{s.title}</mark>
+                  </h3>
+                  <p>{s.text}</p>
+                  <span class="lh-more">
+                    <i aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></i>
+                    {h.cardMore}
+                  </span>
+                </div>
+                <div class="lh-card__art" aria-hidden="true">
+                  <ServiceIcon i={i} />
+                  <b><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M5 3h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></b>
+                </div>
+              </a>
+            );
+          })
+        }
+      </div>
+      <a class="lh-link" href={path(lang, 'services')} data-reveal>{h.servicesMore} →</a>
     </div>
   </section>
 
-  <!-- SERVICES -->
-  <section class="section--tight" data-shape="wave" data-place="center" data-opacity="0.85">
+  <!-- MẪU GIAO DIỆN: khối navy -->
+  <section class="lh-section lh-section--flush">
     <div class="container">
-      <div class="shead">
-        <div>
-          <p class="label">{h.servicesLabel}</p>
-          <h2 class="h2" data-split>{h.servicesTitle}</h2>
+      <div class="lh-band lh-dark" data-reveal>
+        <div class="lh-band__text">
+          <p class="lh-tag lh-tag--dark">{h.workLabel}</p>
+          <h2 class="lh-h2">{h.workTitle}</h2>
+          <p class="lh-band__lead">{h.workText}</p>
+          <Btn href={path(lang, 'work')}>{h.workMore}</Btn>
         </div>
-        <a class="link-arrow" href={path(lang, 'services')} data-reveal>
-          {h.servicesMore}
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
-        </a>
+        <div class="lh-band__shot">
+          <Picture
+            src={nailDesk}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            widths={[640, 960]}
+            sizes="(max-width: 1080px) 88vw, 34vw"
+            alt={`${nail.name} — ${view.desk}`}
+          />
+          <span class="lh-chip lh-chip--shot">
+            <i aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="4" width="15" height="12" rx="2"></rect><path d="M2.5 7.5h15"></path></svg></i>
+            <span>{nail.name}<small>{nail.industry}</small></span>
+          </span>
+        </div>
+        <ul class="lh-band__list">
+          {
+            tpls.map((x) => (
+              <li>
+                <a href={`${path(lang, 'work')}#mau-${x.id}`}>
+                  <span>
+                    {x.name}
+                    <small>{x.industry}</small>
+                  </span>
+                  <svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 11L11 3M5 3h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
-      <div class="cards">
+    </div>
+  </section>
+
+  <!-- QUY TRÌNH: 4 thẻ tĩnh, hình nét mảnh tự vẽ khi hiện ra -->
+  <section class="lh-section">
+    <div class="container">
+      <div class="lh-head">
+        <div>
+          <p class="lh-tag" data-reveal>{h.processLabel}</p>
+          <h2 class="lh-h2 lh-head__title" data-reveal>{h.processTitle}</h2>
+        </div>
+        <p data-reveal>{h.processText}</p>
+      </div>
+      <ol class="lh-steps">
         {
-          t.services.map((s, i) => (
-            <article class="card" data-reveal>
-              <span class="card__num">0{i + 1}</span>
-              <ServiceIcon i={i} class="card__icon" />
+          t.process.map((s, i) => (
+            <li class="step" data-reveal>
+              <span class="step__num">0{i + 1}</span>
+              <StepArt i={i} />
               <h3 class="h3">{s.title}</h3>
               <p>{s.text}</p>
-            </article>
+            </li>
           ))
         }
-      </div>
+      </ol>
     </div>
   </section>
 
-  <!-- PILLARS (light) -->
-  <section class="section light">
+  <!-- LỜI MỜI CUỐI -->
+  <section class="lh-section lh-section--flush">
     <div class="container">
-      <div class="shead">
+      <div class="lh-cta" data-reveal>
         <div>
-          <p class="label">{h.pillarsLabel}</p>
-          <h2 class="h2" data-split>{h.pillarsTitle}</h2>
+          <h2 class="lh-h2">
+            {h.ctaTitleA} <mark class="lh-mark">{h.ctaTitleB}</mark>
+          </h2>
+          <p>{h.ctaText}</p>
+          <div class="lh-actions">
+            <Btn href={path(lang, 'contact')}>{t.nav.cta}</Btn>
+            <Btn href={contact.booking || path(lang, 'contact')} variant="ghost" icon={false}>{t.nav.bookLong}</Btn>
+          </div>
         </div>
-      </div>
-      <div class="pillars">
-        {
-          h.pillars.map((p, i) => (
-            <div class="pillar" data-reveal>
-              <span class="num muted">0{i + 1}</span>
-              <p class="pillar__k">{p.k}</p>
-              <h3 class="h3">{p.title}</h3>
-              <p>{p.text}</p>
-            </div>
-          ))
-        }
+        <Logo kind="monogram" tone="color" class="lh-cta__mark" />
       </div>
     </div>
   </section>
-
-  <!-- PROCESS -->
-  <Process lang={lang} label={h.processLabel} title={h.processTitle} />
-
-  <!-- WORK -->
-  <section class="section--tight">
-    <div class="container">
-      <div class="shead" data-shape="knot" data-place="right">
-        <div>
-          <p class="label">{h.workLabel}</p>
-          <h2 class="h2" data-split>{h.workTitle}</h2>
-          <p class="lead" style="margin-top:24px" data-reveal>{h.workText}</p>
-        </div>
-        <a class="link-arrow" href={path(lang, 'work')} data-reveal>
-          {h.workMore}
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
-        </a>
-      </div>
-      <div class="works works--home">
-        {
-          ['pho', 'nail'].map((id) => (
-            <WorkCard
-              tpl={t.workPage.templates.find((x) => x.id === id)!}
-              lang={lang}
-              badge={t.workPage.badge}
-              href={`${path(lang, 'work')}#mau-${id}`}
-              cursor={cursorView}
-            />
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <BigCta lang={lang} />
 </Base>

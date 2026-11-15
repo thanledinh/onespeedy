@@ -154,10 +154,19 @@ function revealCurtain() {
 // ------------------------------------------------------------
 // Con trỏ tùy chỉnh
 // ------------------------------------------------------------
+let cursorCleanup: (() => void) | null = null;
+
 function initCursor() {
   if (!finePointer || reduced) return;
   const root = document.querySelector<HTMLElement>('[data-cursor-root]');
-  if (!root || root.dataset.ready) return;
+  if (!root) {
+    // Trang không có con trỏ (layout tối giản): gỡ ticker và listener của trang trước
+    cursorCleanup?.();
+    cursorCleanup = null;
+    return;
+  }
+  if (root.dataset.ready) return;
+  cursorCleanup?.();
   root.dataset.ready = '1';
   document.documentElement.classList.add('has-cursor');
   const dot = root.querySelector<HTMLElement>('.cursor__dot')!;
@@ -168,32 +177,39 @@ function initCursor() {
   const setDot = { x: gsap.quickSetter(dot, 'x', 'px'), y: gsap.quickSetter(dot, 'y', 'px') };
   const setRing = { x: gsap.quickSetter(ring, 'x', 'px'), y: gsap.quickSetter(ring, 'y', 'px') };
 
-  window.addEventListener(
-    'pointermove',
-    (e) => {
-      pos.x = e.clientX;
-      pos.y = e.clientY;
-      setDot.x(pos.x);
-      setDot.y(pos.y);
-      const target = e.target as HTMLElement;
-      const labelled = target.closest<HTMLElement>('[data-cursor]');
-      const hidden = target.closest('[data-cursor-hide], input, textarea, .chat__panel');
-      const interactive = target.closest('a, button, summary, label, [role="button"]');
-      root.classList.toggle('is-hidden', !!hidden);
-      root.classList.toggle('is-label', !!labelled?.dataset.cursor);
-      root.classList.toggle('is-hover', !!interactive && !labelled?.dataset.cursor);
-      label.textContent = labelled?.dataset.cursor ?? '';
-    },
-    { passive: true },
-  );
-  document.addEventListener('pointerleave', () => root.classList.add('is-hidden'));
-  document.addEventListener('pointerenter', () => root.classList.remove('is-hidden'));
-  gsap.ticker.add(() => {
+  const onMove = (e: PointerEvent) => {
+    pos.x = e.clientX;
+    pos.y = e.clientY;
+    setDot.x(pos.x);
+    setDot.y(pos.y);
+    const target = e.target as HTMLElement;
+    const labelled = target.closest<HTMLElement>('[data-cursor]');
+    const hidden = target.closest('[data-cursor-hide], input, textarea, .chat__panel');
+    const interactive = target.closest('a, button, summary, label, [role="button"]');
+    root.classList.toggle('is-hidden', !!hidden);
+    root.classList.toggle('is-label', !!labelled?.dataset.cursor);
+    root.classList.toggle('is-hover', !!interactive && !labelled?.dataset.cursor);
+    label.textContent = labelled?.dataset.cursor ?? '';
+  };
+  const onLeave = () => root.classList.add('is-hidden');
+  const onEnter = () => root.classList.remove('is-hidden');
+  const tick = () => {
     ringPos.x += (pos.x - ringPos.x) * 0.18;
     ringPos.y += (pos.y - ringPos.y) * 0.18;
     setRing.x(ringPos.x);
     setRing.y(ringPos.y);
-  });
+  };
+  window.addEventListener('pointermove', onMove, { passive: true });
+  document.addEventListener('pointerleave', onLeave);
+  document.addEventListener('pointerenter', onEnter);
+  gsap.ticker.add(tick);
+  cursorCleanup = () => {
+    window.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerleave', onLeave);
+    document.removeEventListener('pointerenter', onEnter);
+    gsap.ticker.remove(tick);
+    document.documentElement.classList.remove('has-cursor');
+  };
 }
 
 // ------------------------------------------------------------
@@ -673,9 +689,12 @@ function initChat() {
 // Vòng đời trang
 // ------------------------------------------------------------
 let first = true;
+// Trang trước có màn che đã phủ kín hay không (trang tối giản không có màn che)
+let covered = false;
 
 document.addEventListener('astro:before-preparation', (e: any) => {
   const original = e.loader;
+  covered = !!curtain() && !reduced;
   e.loader = async () => {
     scene?.pulse();
     await Promise.all([coverCurtain(), original()]);
@@ -683,11 +702,17 @@ document.addEventListener('astro:before-preparation', (e: any) => {
 });
 
 document.addEventListener('astro:after-swap', () => {
+  // Sang trang không có cảnh 3D (layout tối giản): huỷ WebGL cũ để không chạy ngầm và không tạo thêm context khi quay lại
+  if (scene && !document.querySelector('[data-scene-host]')) {
+    scene.destroy();
+    scene = null;
+  }
   syncAnchors(true);
   lenis.scrollTo(0, { immediate: true, force: true });
   lastY = 0;
   document.documentElement.classList.add('js');
-  revealCurtain();
+  if (covered) revealCurtain();
+  covered = false;
 });
 
 document.addEventListener('astro:page-load', () => {

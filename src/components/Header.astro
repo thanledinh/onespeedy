@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Btn from './Btn.astro';
-import { useT, path, contact, type Lang, type PageKey } from '../i18n/ui';
+import { useT, path, contact, hasPage, type Lang, type PageKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -12,7 +12,8 @@ const t = useT(lang);
 const links: PageKey[] = ['services', 'pricing', 'work', 'about', 'contact'];
 const bookHref = contact.booking || path(lang, 'contact');
 const other: Lang = lang === 'vi' ? 'en' : 'vi';
-const samePage = (l: Lang) => path(l, page ?? 'home');
+// Trang chỉ có bản tiếng Việt (Express): nút EN dẫn về trang chủ tiếng Anh
+const samePage = (l: Lang) => (page && hasPage(l, page) ? path(l, page) : path(l, 'home'));
 ---
 
 <header class="header" data-header>

@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Btn from '../../components/Btn.astro';
 import BigCta from '../../components/BigCta.astro';
-import { useT, path, contact, type Lang } from '../../i18n/ui';
+import { useT, path, contact, hasPage, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'vi' } }, { params: { lang: 'en' } }];
@@ -27,7 +27,7 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
   <!-- Các gói -->
   <section class="section--tight" style="padding-top:0" data-shape="bars" data-place="center" data-opacity="0.45">
     <div class="container">
-      <div class="plans">
+      <div class="plans" style={`--plans:${p.plans.length}`}>
         {
           p.plans.map((plan, i) => (
             <article class:list={['plan', plan.featured && 'plan--featured', plan.id === 'signature' && 'plan--signature']} data-reveal>
@@ -38,8 +38,14 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
               <h2 class="plan__name">{plan.name}</h2>
               <p class="plan__for">{plan.for}</p>
               <p class="plan__price">
-                <small>{p.from}</small>
-                <span class="num">${plan.price}</span>
+                {/\d/.test(plan.price) ? (
+                  <>
+                    <small>{p.from}</small>
+                    <span class="num">${plan.price}</span>
+                  </>
+                ) : (
+                  <span class="plan__talk">{plan.price}</span>
+                )}
               </p>
               <ul class="plan__list">
                 {plan.features.map((f) => <li>{f}</li>)}
@@ -52,9 +58,13 @@ const cell = (v: string) => (v === 'yes' || v === 'no' || v === 'add' ? v : null
         }
       </div>
       <p class="plans__note">{p.note}</p>
-      <p class="plans__express">
-        {p.expressHint} <a href={path(lang, 'express')}>{p.expressLink} →</a>
-      </p>
+      {
+        hasPage(lang, 'express') && p.expressHint && (
+          <p class="plans__express">
+            {p.expressHint} <a href={path(lang, 'express')}>{p.expressLink} →</a>
+          </p>
+        )
+      }
     </div>
   </section>
 
