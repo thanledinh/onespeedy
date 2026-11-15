@@ -10,7 +10,7 @@ interface Props {
 }
 const { lang, neutral = false } = Astro.props;
 const t = useT(lang);
-const links = (['home', 'services', 'pricing', 'work', 'about', 'contact', 'express'] as PageKey[]).filter(
+const links = (['home', 'services', 'pricing', 'work', 'about', 'contact'] as PageKey[]).filter(
   (k) => hasPage(lang, k) && (!neutral || hasPage('en', k)),
 );
 // Số điện thoại VN chỉ hiện ở bản tiếng Việt (khách quốc tế dùng email / kênh khác)

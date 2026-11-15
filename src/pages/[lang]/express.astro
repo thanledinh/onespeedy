@@ -19,7 +19,7 @@ const p = t.expressPage;
 const draft = Object.values(express).some((v) => (typeof v === 'string' ? !v : !v.vi || !v.en));
 ---
 
-<Base lang={lang} page="express" noindex={draft}>
+<Base lang={lang} page="express" noindex>
   <section class="phero" data-shape="sphere" data-place="corner" data-opacity="0.7">
     <div class="container">
       <p class="label" data-reveal>{p.label}</p>

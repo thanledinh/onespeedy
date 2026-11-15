@@ -1,28 +1,25 @@
 ---
-// Trang gốc: chuyển tới /vi/ hoặc /en/ theo ngôn ngữ trình duyệt.
+// Trang gốc: chuyển sang /en/ (tiếng Anh trước, bán thị trường nước ngoài). nginx đã chuyển 302 trước khi tới file này;
+// file này chỉ là dự phòng khi chạy chỗ khác (vd. astro preview).
 ---
 
 <!doctype html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>OneSpeedy</title>
     <meta name="robots" content="noindex" />
-    <link rel="alternate" hreflang="vi" href="/vi/" />
+    <link rel="canonical" href="/en/" />
     <link rel="alternate" hreflang="en" href="/en/" />
+    <link rel="alternate" hreflang="vi" href="/vi/" />
+    <link rel="alternate" hreflang="x-default" href="/en/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0B1720" />
-    <script is:inline>
-      (function () {
-        var langs = navigator.languages || [navigator.language || 'vi'];
-        var vi = langs.some(function (l) { return /^vi\b/i.test(l); });
-        location.replace(vi ? '/vi/' : '/en/');
-      })();
-    </script>
-    <noscript><meta http-equiv="refresh" content="0; url=/vi/" /></noscript>
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <script is:inline>location.replace('/en/');</script>
     <style>
-      html, body { margin: 0; height: 100%; background: #0b1720; }
+      html, body { margin: 0; height: 100%; background: #f5f7f6; }
     </style>
   </head>
   <body></body>
