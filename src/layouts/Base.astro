@@ -69,6 +69,9 @@ const jsonLd = {
 >
   <head>
     <meta charset="utf-8" />
+    <!-- Cloudflare "Email Address Obfuscation" bỏ qua đoạn giữa email_off và /email_off: email (contact@, support@, billing@)
+         hiện đúng chữ cả khi không chạy script (người duyệt Paddle, máy đọc trang, chuyển trang không tải lại). -->
+    <Fragment set:html="<!--email_off-->" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -152,5 +155,6 @@ const jsonLd = {
     <script>
       import '../scripts/app';
     </script>
+    <Fragment set:html="<!--/email_off-->" />
   </body>
 </html>
