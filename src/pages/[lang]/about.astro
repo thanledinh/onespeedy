@@ -94,6 +94,38 @@ const offerHref = (to: string) => (to === 'seo' ? seoOps[lang] : path(lang, to a
     </div>
   </section>
 
+  <!-- NGƯỜI SÁNG LẬP -->
+  <section class="lh-section lh-section--top0">
+    <div class="container">
+      <div class="lh-head">
+        <div>
+          <p class="lh-tag" data-reveal>{p.foundersLabel}</p>
+          <h2 class="lh-h2 lh-head__title" data-reveal>{p.foundersTitle}</h2>
+        </div>
+      </div>
+      <div class="lh-founders">
+        {
+          p.founders.map((f) => (
+            <article class="lh-founder" data-reveal>
+              <div class="lh-founder__top">
+                <span class="lh-founder__avatar" aria-hidden="true">{f.initials}</span>
+                <div>
+                  <h3 class="lh-mini__title">{f.name}</h3>
+                  <p class="lh-founder__role">{f.role}</p>
+                </div>
+              </div>
+              <p class="lh-founder__bio">{f.bio}</p>
+              <ul class="lh-founder__skills">
+                {f.skills.map((s) => <li>{s}</li>)}
+              </ul>
+              <a class="lh-founder__link" href={f.link.href} rel="noopener" target="_blank">{f.link.label} ↗</a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
   <!-- ĐỘI NGŨ -->
   <section class="lh-section lh-section--flush">
     <div class="container">

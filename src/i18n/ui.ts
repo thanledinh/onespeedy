@@ -429,6 +429,26 @@ const vi = {
     teamTitle: 'Đội ngũ đang mở rộng',
     teamText: 'Chúng tôi đang tìm những designer và developer yêu cái đẹp và tốc độ.',
     teamCta: 'Gửi thư cho chúng tôi',
+    foundersLabel: 'Người sáng lập',
+    foundersTitle: 'Hai người đứng sau OneSpeedy.',
+    founders: [
+      {
+        name: 'Lê Hồ Mỹ Trâm',
+        initials: 'MT',
+        role: 'Đồng sáng lập & CEO',
+        bio: 'Lo marketing và tăng trưởng. Hơn 4 năm làm digital marketing trọn gói: quảng cáo Google và Meta, đo lường bằng GA4 và Tag Manager, tối ưu tỷ lệ chuyển đổi, quản lý dự án web và ứng dụng di động. Dùng AI tạo sinh cho quảng cáo, landing page và video.',
+        skills: ['Google & Meta Ads', 'GA4 / GTM', 'CRO', 'Quản lý dự án'],
+        link: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tram-le-ho-my-46410b299/' },
+      },
+      {
+        name: 'Lê Đình Thân',
+        initials: 'ĐT',
+        role: 'Đồng sáng lập & CTO',
+        bio: 'Người làm ra SEO Ops. Lập trình web và làm SEO: tự xây và vận hành website doanh nghiệp bằng Next.js, chuyển nền tảng hơn 200 bài viết mà không tụt thứ hạng, làm Technical SEO, dữ liệu có cấu trúc và theo dõi hiển thị trên AI.',
+        skills: ['Technical SEO', 'Next.js / TypeScript', 'Topic cluster', 'Search Console'],
+        link: { label: 'GitHub', href: 'https://github.com/thanledinh' },
+      },
+    ],
   },
   contactPage: {
     label: 'Liên hệ',
@@ -1013,6 +1033,26 @@ const en: typeof vi = {
     teamTitle: 'Our team is growing',
     teamText: "We're looking for designers and developers who love beauty and speed.",
     teamCta: 'Write to us',
+    foundersLabel: 'Founders',
+    foundersTitle: 'The two people behind OneSpeedy.',
+    founders: [
+      {
+        name: 'Lê Hồ Mỹ Trâm',
+        initials: 'MT',
+        role: 'Co-founder & CEO',
+        bio: 'Leads marketing and growth. 4+ years in full-stack digital marketing: Google and Meta ads, GA4 and Tag Manager tracking, conversion optimisation, and managing web and mobile-app projects. Uses generative AI for ads, landing pages and video.',
+        skills: ['Google & Meta Ads', 'GA4 / GTM', 'CRO', 'Project management'],
+        link: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tram-le-ho-my-46410b299/' },
+      },
+      {
+        name: 'Lê Đình Thân',
+        initials: 'ĐT',
+        role: 'Co-founder & CTO',
+        bio: 'Creator of SEO Ops. Web developer and SEO: builds and runs business websites on Next.js, migrated 200+ articles to a new platform without losing rankings, and works on technical SEO, structured data and AI search visibility.',
+        skills: ['Technical SEO', 'Next.js / TypeScript', 'Topic clusters', 'Search Console'],
+        link: { label: 'GitHub', href: 'https://github.com/thanledinh' },
+      },
+    ],
   },
   contactPage: {
     label: 'Contact',
