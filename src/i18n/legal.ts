@@ -5,7 +5,7 @@ import type { Lang } from './ui';
 export const legalEntity = {
   brand: 'OneSpeedy',
   // Họ tên thật của người đứng tên kinh doanh (hộ cá thể). Paddle cần tên này khớp với tài khoản Paddle.
-  owner: '',
+  owner: 'Lê Hồ Mỹ Trâm',
   country: { en: 'Vietnam', vi: 'Việt Nam' },
   email: 'support@onespeedy.com',
   billing: 'billing@onespeedy.com',

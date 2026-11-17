@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
 import { path, type Lang, type PageKey } from '../i18n/ui';
+import { legalDocs, legalPath } from '../i18n/legal';
 
 // Sitemap cho Google: mọi trang song ngữ của web OneSpeedy, cộng trang SEO Ops (/seo, /en/seo) do máy chủ SEO Ops
 // phục vụ trên cùng tên miền. Express (chỉ tiếng Việt, đang ẩn) không có ở đây. Sửa nội dung trang thì đổi LASTMOD.
 const PAGES: PageKey[] = ['home', 'services', 'pricing', 'work', 'about', 'contact'];
-const LASTMOD = '2026-11-15';
+const LASTMOD = '2026-11-17';
 
 export const GET: APIRoute = ({ site }) => {
   const origin = (site ?? new URL('https://onespeedy.com')).origin;
@@ -12,6 +13,7 @@ export const GET: APIRoute = ({ site }) => {
   const pairs: Array<Record<Lang, string>> = [
     ...PAGES.map((page) => ({ vi: abs(path('vi', page)), en: abs(path('en', page)) })),
     { vi: abs('/seo'), en: abs('/en/seo') },
+    ...legalDocs.map((doc) => ({ vi: abs(legalPath('vi', doc)), en: abs(legalPath('en', doc)) })),
   ];
   const entry = (loc: string, alt: Record<Lang, string>) =>
     `<url><loc>${loc}</loc><xhtml:link rel="alternate" hreflang="vi" href="${alt.vi}"/><xhtml:link rel="alternate" hreflang="en" href="${alt.en}"/><xhtml:link rel="alternate" hreflang="x-default" href="${alt.en}"/><lastmod>${LASTMOD}</lastmod></url>`;
