@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import Btn from './Btn.astro';
 import { useT, path, contact, hasPage, seoOps, type Lang, type PageKey } from '../i18n/ui';
+import { legal, legalDocs, legalPath } from '../i18n/legal';
 
 interface Props {
   lang: Lang;
@@ -55,6 +56,9 @@ const year = new Date().getFullYear();
 
     <div class="footer__bottom">
       <span>© {year} OneSpeedy. {t.footer.rights}</span>
+      <span class="footer__legal">
+        {legalDocs.map((k) => <a href={legalPath(lang, k)}>{legal[lang].labels[k]}</a>)}
+      </span>
       <span class="num">{t.tagline}</span>
       <a href="#top" data-to-top>{t.footer.top} ↑</a>
     </div>

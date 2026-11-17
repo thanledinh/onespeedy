@@ -49,8 +49,8 @@ export function hasPage(lang: Lang, page: PageKey) {
 export const contact = {
   // Link đặt lịch gọi (Google Calendar / Calendly). Để trống thì nút "Đặt lịch gọi" dẫn về trang Liên hệ.
   booking: '',
-  // Tạm dùng hộp thư cá nhân (chủ chọn ngày 15/11/2026); đổi sang hộp thư tên miền khi có.
-  email: 'thanle.webdev@gmail.com',
+  // Hộp thư tên miền (17/11/2026). Pháp lý dùng support@ và billing@ (i18n/legal.ts).
+  email: 'contact@onespeedy.com',
   phone: '0777 710 027',
   zalo: '',
   messenger: 'https://m.me/onespeedy',
@@ -637,7 +637,7 @@ const vi = {
       },
       {
         q: 'Gặp tư vấn viên',
-        a: 'Bạn nhắn Messenger, gọi 0777 710 027 hoặc email thanle.webdev@gmail.com, chúng tôi sẽ trả lời bạn.',
+        a: 'Bạn nhắn Messenger, gọi 0777 710 027 hoặc email contact@onespeedy.com, chúng tôi sẽ trả lời bạn.',
       },
     ],
     placeholder: 'Nhập tin nhắn…',
@@ -1220,7 +1220,7 @@ const en: typeof vi = {
       },
       {
         q: 'Talk to a person',
-        a: 'Message us on Messenger, call +84 777 710 027 or email thanle.webdev@gmail.com and we will reply.',
+        a: 'Message us on Messenger, call +84 777 710 027 or email contact@onespeedy.com and we will reply.',
       },
     ],
     placeholder: 'Type a message…',

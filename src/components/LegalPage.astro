@@ -1,0 +1,69 @@
+---
+// Khung chung cho trang Điều khoản / Bảo mật / Hoàn tiền (giao diện sáng). Chữ ở i18n/legal.ts.
+import Base from '../layouts/Base.astro';
+import { legal, legalEntity, legalDocs, legalPath, LEGAL_UPDATED, type LegalDoc } from '../i18n/legal';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  doc: LegalDoc;
+}
+const { lang, doc } = Astro.props;
+const L = legal[lang];
+const d = L[doc];
+const ownerMissing = !legalEntity.owner;
+// "{owner}" → họ tên chủ; chưa điền thì hiện nhãn vàng
+const parts = (s: string) =>
+  s.split('{owner}').flatMap((chunk, i) => (i === 0 ? [{ s: chunk }] : [{ owner: true }, { s: chunk }]));
+const blocks = (ps: string[]) => {
+  const out: Array<{ list: string[] } | { para: string }> = [];
+  for (const p of ps) {
+    if (p.startsWith('- ')) {
+      const last = out[out.length - 1];
+      if (last && 'list' in last) last.list.push(p.slice(2));
+      else out.push({ list: [p.slice(2)] });
+    } else out.push({ para: p });
+  }
+  return out;
+};
+const date = new Date(LEGAL_UPDATED).toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Base lang={lang} page={null} look="light" title={d.title} description={d.description} noindex={ownerMissing}>
+  <section class="lh-phero">
+    <div class="container">
+      <p class="lh-tag">{L.labels.legal}</p>
+      <h1 class="lh-h1">{L.labels[doc]}</h1>
+      <p class="lh-lead">{d.lead}</p>
+      <p class="lh-legal__date">{L.labels.updated}: {date}</p>
+    </div>
+  </section>
+
+  <section class="lh-section lh-section--top0">
+    <div class="container lh-legal">
+      <nav class="lh-legal__nav" aria-label={L.labels.legal}>
+        {legalDocs.map((k) => <a href={legalPath(lang, k)} aria-current={k === doc ? 'page' : undefined}>{L.labels[k]}</a>)}
+      </nav>
+      <article class="lh-legal__body">
+        {
+          d.sections.map((sec) => (
+            <section>
+              <h2>{sec.h}</h2>
+              {blocks(sec.p).map((b) =>
+                'list' in b ? (
+                  <ul>{b.list.map((li) => <li>{li}</li>)}</ul>
+                ) : (
+                  <p>
+                    {parts(b.para).map((x) =>
+                      'owner' in x ? (legalEntity.owner ? legalEntity.owner : <mark class="todo">[{L.labels.ownerTodo}]</mark>) : x.s,
+                    )}
+                  </p>
+                ),
+              )}
+            </section>
+          ))
+        }
+      </article>
+    </div>
+  </section>
+</Base>

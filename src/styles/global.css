@@ -2352,3 +2352,13 @@ html.menu-open .chat {
     inset -1px 0 0 var(--line),
     inset 0 -1px 0 var(--line);
 }
+
+/* Link Điều khoản / Bảo mật / Hoàn tiền ở chân trang */
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer__legal a {
+  color: inherit;
+}

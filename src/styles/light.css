@@ -1534,3 +1534,74 @@ html[data-look='light'] section[id] {
   text-underline-offset: 0.12em;
   text-decoration-skip-ink: none;
 }
+
+/* ---------- Trang pháp lý (Điều khoản, Bảo mật, Hoàn tiền) ---------- */
+.lh-legal__date {
+  margin-top: 16px;
+  color: var(--fg-dim);
+  font-size: 0.95rem;
+}
+.lh-legal {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .lh-legal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.lh-legal__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 96px;
+}
+@media (max-width: 760px) {
+  .lh-legal__nav {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+.lh-legal__nav a {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+.lh-legal__nav a[aria-current='page'] {
+  background: var(--card);
+  color: var(--fg);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--teal);
+}
+.lh-legal__body {
+  max-width: 72ch;
+}
+.lh-legal__body section + section {
+  margin-top: 32px;
+}
+.lh-legal__body h2 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+.lh-legal__body p,
+.lh-legal__body li {
+  color: var(--fg-muted);
+  line-height: 1.7;
+}
+.lh-legal__body p + p,
+.lh-legal__body ul + p,
+.lh-legal__body p + ul {
+  margin-top: 10px;
+}
+.lh-legal__body ul {
+  padding-left: 1.2em;
+  list-style: disc;
+}
+.lh-legal__body li + li {
+  margin-top: 4px;
+}
